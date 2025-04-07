@@ -4,12 +4,12 @@
     { "text": "Hoću kavu", "icon": "Coffee", "audio": "hocu_kavu" },
     { "text": "Hoću slatko", "icon": "Candy", "audio": "hocu_slatko" },
     { "text": "Daj mi telefon", "icon": "Phone", "audio": "daj_mi_telefon" },
-    { "text": "Marina", "icon": "User", "audio": "marina" },
-    { "text": "Josip", "icon": "User", "audio": "josip" },
-    { "text": "Mato", "icon": "User", "audio": "mato" },
-    { "text": "Ružica", "icon": "User", "audio": "ruzica" },
-    { "text": "Luxi", "icon": "User", "audio": "luxi" },
-    { "text": "Gladna sam", "icon": "Utensils", "audio": "gladna_sam" },
+    { "text": "Marina", "icon": "Fish", "audio": "marina" },
+    { "text": "Josip", "icon": "Rabbit", "audio": "josip" },
+    { "text": "Mato", "icon": "Crown", "audio": "mato" },
+    { "text": "Ružica", "icon": "Flower2", "audio": "ruzica" },
+    { "text": "Luxi", "icon": "Dog", "audio": "luxi" },
+    { "text": "Gladna sam", "icon": "Pizza", "audio": "gladna_sam" },
     {
       "text": "Moram na toalet",
       "icon": "Toilet",
@@ -19,7 +19,7 @@
     { "text": "Vruće mi je", "icon": "Sun", "audio": "vruce_mi_je" },
     { "text": "Imam bolove", "icon": "Activity", "audio": "imam_bolove" },
     { "text": "Umorna sam", "icon": "Bed", "audio": "umorna_sam" },
-    { "text": "Želim leći", "icon": "Bed", "audio": "zelim_leci" },
+    { "text": "Želim leći", "icon": "BedDouble", "audio": "zelim_leci" },
     {
       "text": "Želim ustati",
       "icon": "Footprints",
@@ -27,7 +27,7 @@
     },
     {
       "text": "Pomozi mi, molim te",
-      "icon": "HelpCircle",
+      "icon": "HandHelping",
       "audio": "pomozi_mi_molim_te"
     }
   ],
@@ -41,15 +41,15 @@
       "icon": "AlertCircle",
       "audio": "frustrirana_sam"
     },
-    { "text": "Hvala ti", "icon": "Heart", "audio": "hvala_ti" },
-    { "text": "Molim te", "icon": "Hand", "audio": "molim_te" },
+    { "text": "Hvala ti", "icon": "MessageCircleHeart", "audio": "hvala_ti" },
+    { "text": "Molim te", "icon": "HandHeart", "audio": "molim_te" },
     { "text": "Volim te", "icon": "Heart", "audio": "volim_te" }
   ],
   "Odgovori": [
     { "text": "Da", "icon": "Check", "audio": "da" },
     { "text": "Ne", "icon": "X", "audio": "ne" },
-    { "text": "Možda", "icon": "HelpCircle", "audio": "mozda" },
-    { "text": "Ne znam", "icon": "HelpCircle", "audio": "ne_znam" },
+    { "text": "Možda", "icon": "MessageCircleQuestion", "audio": "mozda" },
+    { "text": "Ne znam", "icon": "CircleOff", "audio": "ne_znam" },
     {
       "text": "Ponovi, molim te",
       "icon": "Repeat",
@@ -59,11 +59,11 @@
   "Društvena komunikacija": [
     { "text": "Dobro jutro", "icon": "Sun", "audio": "dobro_jutro" },
     { "text": "Dobra večer", "icon": "Moon", "audio": "dobra_vecer" },
-    { "text": "Doviđenja", "icon": "Wave", "audio": "dovidjenja" },
+    { "text": "Doviđenja", "icon": "HandMetal", "audio": "dovidjenja" },
     { "text": "Kako si?", "icon": "MessageCircle", "audio": "kako_si" },
     {
       "text": "Drago mi je da te vidim",
-      "icon": "Smile",
+      "icon": "Eye",
       "audio": "drago_mi_je_da_te_vidim"
     },
     {
@@ -83,29 +83,30 @@
     },
     {
       "text": "Dođi bliže, molim te",
-      "icon": "MoveRight",
+      "icon": "Minimize2",
       "audio": "dodji_blize_molim_te"
     },
-    { "text": "Molim te, idi", "icon": "MoveRight", "audio": "molim_te_idi" }
+    { "text": "Molim te, idi", "icon": "Maximize2", "audio": "molim_te_idi" },
+    { "text": "Ideš mi na živce", "icon": "Zap", "audio": "ides_mi_na_zivce" }
   ],
   "Zdravlje i tijelo": [
     {
       "text": "Imam glavobolju",
-      "icon": "Activity",
+      "icon": "Brain",
       "audio": "imam_glavobolju"
     },
     {
       "text": "Imam bol u trbuhu",
-      "icon": "Activity",
+      "icon": "UserRoundX",
       "audio": "imam_bol_u_trbuhu"
     },
     {
       "text": "Ne mogu disati",
-      "icon": "Activity",
+      "icon": "Wind",
       "audio": "ne_mogu_disati"
     },
-    { "text": "Boli me ruka", "icon": "Activity", "audio": "boli_me_ruka" },
-    { "text": "Boli me noga", "icon": "Activity", "audio": "boli_me_noga" },
+    { "text": "Boli me ruka", "icon": "BicepsFlexed", "audio": "boli_me_ruka" },
+    { "text": "Boli me noga", "icon": "Volleyball", "audio": "boli_me_noga" },
     {
       "text": "Trebam lijekove",
       "icon": "Pill",
@@ -113,7 +114,7 @@
     },
     {
       "text": "Vrtoglavica mi je",
-      "icon": "Activity",
+      "icon": "Sparkles",
       "audio": "vrtoglavica_mi_je"
     }
   ],
@@ -129,32 +130,41 @@
       "audio": "zelim_slusati_glazbu"
     },
     { "text": "Želim čitati", "icon": "Book", "audio": "zelim_citati" },
-    { "text": "Želim spavati", "icon": "Bed", "audio": "zelim_spavati" },
+    { "text": "Želim spavati", "icon": "BedSingle", "audio": "zelim_spavati" },
     {
       "text": "Želim ići u šetnju",
-      "icon": "Footprints",
+      "icon": "Trees",
       "audio": "zelim_ici_u_setnju"
-    }
+    },
+    {
+      "text": "Želim plesati",
+      "icon": "PartyPopper",
+      "audio": "zelim_plesati"
+    },
+    { "text": "Hoću pokljukušu", "icon": "Donut", "audio": "hocu_pokljukusu" },
+    {
+      "text": "Ugasi svijetlo",
+      "icon": "LightbulbOff",
+      "audio": "ugasi_svijetlo"
+    },
+    { "text": "Upali svijetlo", "icon": "Lightbulb", "audio": "upali_svijetlo" }
   ],
   "Osobe i odnosi": [
-    { "text": "Zovi moju kćer", "icon": "Phone", "audio": "zovi_moju_kcer" },
+    {
+      "text": "Zovi moju kćer",
+      "icon": "PhoneCall",
+      "audio": "zovi_moju_kcer"
+    },
     {
       "text": "Zovi njegovateljicu",
-      "icon": "Phone",
+      "icon": "Ambulance",
       "audio": "zovi_njegovateljicu"
     },
-    { "text": "Zovi liječnicu", "icon": "Phone", "audio": "zovi_lijecnicu" },
+    { "text": "Zovi liječnicu", "icon": "Cross", "audio": "zovi_lijecnicu" },
     {
       "text": "Zovi moju prijateljicu",
-      "icon": "Phone",
+      "icon": "Venus",
       "audio": "zovi_moju_prijateljicu"
     }
-  ],
-  "Imena": [
-    { "text": "Marina!", "icon": "User", "audio": "marina" },
-    { "text": "Josip", "icon": "User", "audio": "josip" },
-    { "text": "Mato", "icon": "User", "audio": "mato" },
-    { "text": "Ružica", "icon": "User", "audio": "ruzica" },
-    { "text": "Luxi", "icon": "User", "audio": "luxi" }
   ]
 }
