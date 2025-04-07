@@ -1,0 +1,59 @@
+{
+  "Osnovne potrebe": [
+    "Žedna sam",
+    "Gladna sam",
+    "Moram na toalet",
+    "Hladno mi je",
+    "Vruće mi je",
+    "Imam bolove",
+    "Umorna sam",
+    "Želim leći",
+    "Želim ustati",
+    "Pomozi mi, molim te"
+  ],
+  "Emocije": [
+    "Tužna sam",
+    "Sretna sam",
+    "Ljutita sam",
+    "Bojim se",
+    "Frustrirana sam",
+    "Hvala ti",
+    "Molim te",
+    "Volim te"
+  ],
+  "Odgovori": ["Da", "Ne", "Možda", "Ne znam", "Ponovi, molim te"],
+  "Društvena komunikacija": [
+    "Dobro jutro",
+    "Dobra večer",
+    "Doviđenja",
+    "Kako si?",
+    "Drago mi je da te vidim",
+    "Želim razgovarati",
+    "Trebam više vremena",
+    "Molim te, govori sporije",
+    "Dođi bliže, molim te",
+    "Molim te, idi"
+  ],
+  "Zdravlje i tijelo": [
+    "Imam glavobolju",
+    "Imam bol u trbuhu",
+    "Ne mogu disati",
+    "Boli me ruka",
+    "Boli me noga",
+    "Trebam lijekove",
+    "Vrtoglavica mi je"
+  ],
+  "Aktivnosti i želje": [
+    "Želim gledati televiziju",
+    "Želim slušati glazbu",
+    "Želim čitati",
+    "Želim spavati",
+    "Želim ići u šetnju"
+  ],
+  "Osobe i odnosi": [
+    "Zovi moju kćer",
+    "Zovi njegovateljicu",
+    "Zovi liječnicu",
+    "Zovi moju prijateljicu"
+  ]
+}
