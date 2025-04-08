@@ -143,7 +143,7 @@ const playAudio = (audio: string, text: string): void => {
         @click="playAudio('da', 'Da')"
         class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
       >
-        <component :is="icons.Check" class="w-8 h-8" />
+        <component :is="icons.ThumbsUp" class="w-8 h-8" />
         <span class="text-sm text-center">Da</span>
         <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
           >({{ buttonUsage["Da"] || 0 }})</span
@@ -153,7 +153,7 @@ const playAudio = (audio: string, text: string): void => {
         @click="playAudio('ne', 'Ne')"
         class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-red-100 hover:bg-red-200 text-red-800 relative"
       >
-        <component :is="icons.X" class="w-8 h-8" />
+        <component :is="icons.ThumbsDown" class="w-8 h-8" />
         <span class="text-sm text-center">Ne</span>
         <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
           >({{ buttonUsage["Ne"] || 0 }})</span
