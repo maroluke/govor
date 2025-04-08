@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8">
+  <div class="p-4 sm:p-8 bg-gray-50">
     <h1 class="text-2xl font-bold mb-6">Admin-Bereich</h1>
 
     <!-- Statistiken -->
@@ -19,102 +19,108 @@
     </div>
 
     <!-- Filter und Suche -->
-    <div class="mb-6 flex gap-4">
+    <div class="mb-6 flex flex-col sm:flex-row gap-4">
       <input
         v-model="searchTerm"
         type="text"
         placeholder="Suche nach Button oder IP..."
-        class="flex-1 p-2 border rounded"
+        class="flex-1 p-2 border rounded w-full"
       />
-      <button
-        @click="exportData"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Exportieren
-      </button>
-      <button
-        @click="deleteAllClicks"
-        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-      >
-        Alle Daten löschen
-      </button>
+      <div class="flex gap-2 sm:gap-4">
+        <button
+          @click="exportData"
+          class="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 whitespace-nowrap"
+        >
+          Exportieren
+        </button>
+        <button
+          @click="deleteAllClicks"
+          class="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 whitespace-nowrap"
+        >
+          Alle löschen
+        </button>
+      </div>
     </div>
 
     <!-- Tabelle -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full bg-white border border-gray-300">
-        <thead>
-          <tr>
-            <th
-              class="px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
-              @click="sortBy('buttonText')"
-            >
-              Button
-              {{
-                sortColumn === "buttonText"
-                  ? sortDirection === "asc"
-                    ? "↑"
-                    : "↓"
-                  : ""
-              }}
-            </th>
-            <th
-              class="px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
-              @click="sortBy('ipAddress')"
-            >
-              IP-Adresse
-              {{
-                sortColumn === "ipAddress"
-                  ? sortDirection === "asc"
-                    ? "↑"
-                    : "↓"
-                  : ""
-              }}
-            </th>
-            <th
-              class="px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
-              @click="sortBy('timestamp')"
-            >
-              Zeitstempel
-              {{
-                sortColumn === "timestamp"
-                  ? sortDirection === "asc"
-                    ? "↑"
-                    : "↓"
-                  : ""
-              }}
-            </th>
-            <th class="px-6 py-3 border-b border-gray-300 bg-gray-100">
-              Aktionen
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="click in filteredClicks"
-            :key="click.id"
-            class="hover:bg-gray-50"
-          >
-            <td class="px-6 py-4 border-b border-gray-300">
-              {{ click.buttonText }}
-            </td>
-            <td class="px-6 py-4 border-b border-gray-300">
-              {{ click.ipAddress }}
-            </td>
-            <td class="px-6 py-4 border-b border-gray-300">
-              {{ formatDate(click.timestamp) }}
-            </td>
-            <td class="px-6 py-4 border-b border-gray-300">
-              <button
-                @click="deleteClick(click.id)"
-                class="text-red-500 hover:text-red-700"
+    <div class="overflow-x-auto -mx-4 sm:mx-0">
+      <div class="min-w-full inline-block align-middle">
+        <table class="min-w-full bg-white border border-gray-300">
+          <thead>
+            <tr>
+              <th
+                class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
+                @click="sortBy('buttonText')"
               >
-                Löschen
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                Button
+                {{
+                  sortColumn === "buttonText"
+                    ? sortDirection === "asc"
+                      ? "↑"
+                      : "↓"
+                    : ""
+                }}
+              </th>
+              <th
+                class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
+                @click="sortBy('ipAddress')"
+              >
+                IP-Adresse
+                {{
+                  sortColumn === "ipAddress"
+                    ? sortDirection === "asc"
+                      ? "↑"
+                      : "↓"
+                    : ""
+                }}
+              </th>
+              <th
+                class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
+                @click="sortBy('timestamp')"
+              >
+                Zeitstempel
+                {{
+                  sortColumn === "timestamp"
+                    ? sortDirection === "asc"
+                      ? "↑"
+                      : "↓"
+                    : ""
+                }}
+              </th>
+              <th
+                class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100"
+              >
+                Aktionen
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="click in filteredClicks"
+              :key="click.id"
+              class="hover:bg-gray-50"
+            >
+              <td class="px-4 sm:px-6 py-4 border-b border-gray-300">
+                {{ click.buttonText }}
+              </td>
+              <td class="px-4 sm:px-6 py-4 border-b border-gray-300">
+                {{ click.ipAddress }}
+              </td>
+              <td class="px-4 sm:px-6 py-4 border-b border-gray-300">
+                {{ formatDate(click.timestamp) }}
+              </td>
+              <td class="px-4 sm:px-6 py-4 border-b border-gray-300">
+                <button
+                  @click="deleteClick(click.id)"
+                  class="text-red-500 hover:text-red-700"
+                >
+                  Löschen
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>

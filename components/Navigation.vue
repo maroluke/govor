@@ -23,8 +23,11 @@ const handleSortingChange = (value: boolean) => {
   <nav class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
       <div class="flex justify-between">
-        <div class="flex items-center gap-8 w-full">
-          <p to="/" class="text-xl font-bold text-gray-800 p-4 grow">
+        <div class="flex flex-col gap-8 w-full sm:flex-row">
+          <p
+            to="/"
+            class="order-2 text-xl font-bold text-gray-800 grow sm:order-1"
+          >
             <span class="text-2xl">Govor</span>
             <span class="text-sm block font-normal mt-2"
               >Potpomognuta komunikacija</span
@@ -35,42 +38,46 @@ const handleSortingChange = (value: boolean) => {
             <span class="text-sm block font-normal">Marko Lukac, 2025.</span>
             <Heart class="fill-red-500 stroke-red-500 mt-3" />
           </p>
-          <div class="flex items-center gap-2 shrink">
-            <span class="text-sm text-gray-600 leading-tight"
-              >Poredaj prema korištenju</span
-            >
-            <button
-              type="button"
-              @click="handleSortingChange(!props.modelValue)"
-              :class="[
-                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
-                props.modelValue ? 'bg-indigo-600' : 'bg-gray-200',
-              ]"
-            >
-              <span
+          <div
+            class="order-1 shrink flex justify-between items-center gap-6 sm:order-2"
+          >
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-600 leading-tight"
+                >Poredaj prema korištenju</span
+              >
+              <button
+                type="button"
+                @click="handleSortingChange(!props.modelValue)"
                 :class="[
-                  'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                  props.modelValue ? 'translate-x-6' : 'translate-x-1',
+                  'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
+                  props.modelValue ? 'bg-indigo-600' : 'bg-gray-200',
                 ]"
-              />
-            </button>
+              >
+                <span
+                  :class="[
+                    'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                    props.modelValue ? 'translate-x-6' : 'translate-x-1',
+                  ]"
+                />
+              </button>
+            </div>
+            <template v-if="isAdminPage">
+              <NuxtLink
+                to="/"
+                class="shrink text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+              >
+                <Home />
+              </NuxtLink>
+            </template>
+            <template v-else>
+              <NuxtLink
+                to="/admin"
+                class="shrink text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium bg-gray-100 hover:bg-gray-200"
+              >
+                <ChartNoAxesCombined />
+              </NuxtLink>
+            </template>
           </div>
-          <template v-if="isAdminPage">
-            <NuxtLink
-              to="/"
-              class="shrink text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
-            >
-              <Home />
-            </NuxtLink>
-          </template>
-          <template v-else>
-            <NuxtLink
-              to="/admin"
-              class="shrink text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium bg-gray-100 hover:bg-gray-200"
-            >
-              <ChartNoAxesCombined />
-            </NuxtLink>
-          </template>
         </div>
       </div>
     </div>
