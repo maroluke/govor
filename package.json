@@ -22,7 +22,6 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@netlify/plugin-functions": "^1.0.0",
     "@nuxt/types": "^2.18.1",
     "@nuxtjs/tailwindcss": "^6.13.2",
     "autoprefixer": "10.4.17",
