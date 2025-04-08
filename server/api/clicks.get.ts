@@ -4,6 +4,9 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async () => {
   try {
+    // Initialisiere die Datenbank, falls sie nicht existiert
+    await prisma.$connect();
+
     const clicks = await prisma.buttonClick.findMany({
       orderBy: {
         timestamp: "desc",
@@ -12,10 +15,8 @@ export default defineEventHandler(async () => {
     return clicks;
   } catch (error) {
     console.error("Fehler beim Abrufen der Klicks:", error);
-    throw createError({
-      statusCode: 500,
-      message: "Fehler beim Abrufen der Klick-Daten",
-      cause: error,
-    });
+    return [];
+  } finally {
+    await prisma.$disconnect();
   }
 });
