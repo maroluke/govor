@@ -21,14 +21,10 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: "Kommunikations-App",
+      title: "Govor",
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        {
-          name: "description",
-          content: "Eine App zur Unterstützung der Kommunikation",
-        },
       ],
     },
   },
@@ -45,4 +41,6 @@ export default defineNuxtConfig({
       stringify: true,
     },
   },
+
+  pages: true,
 });

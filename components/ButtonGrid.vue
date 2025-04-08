@@ -15,38 +15,29 @@ interface ButtonUsage {
   [key: string]: number;
 }
 
-const sortByUsage = ref(true);
+const categoryColors = {
+  "Osnovne potrebe": "bg-blue-100 hover:bg-blue-200 text-blue-800",
+  Emocije: "bg-purple-100 hover:bg-purple-200 text-purple-800",
+  Odgovori: "bg-green-100 hover:bg-green-200 text-green-800",
+  "Društvena komunikacija": "bg-yellow-100 hover:bg-yellow-200 text-yellow-800",
+  "Zdravlje i tijelo": "bg-pink-100 hover:bg-pink-200 text-pink-800",
+  Higijena: "bg-indigo-100 hover:bg-indigo-200 text-indigo-800",
+  "Aktivnosti i želje": "bg-orange-100 hover:bg-orange-200 text-orange-800",
+  "Osobe i odnosi": "bg-teal-100 hover:bg-teal-200 text-teal-800",
+} as const;
+
+const props = defineProps<{
+  sortByUsage: boolean;
+}>();
+
+const buttonUsage = ref<ButtonUsage>({});
 
 onMounted(() => {
   const savedUsage = localStorage.getItem("buttonUsage");
   if (savedUsage) {
     buttonUsage.value = JSON.parse(savedUsage);
   }
-
-  const savedSorting = localStorage.getItem("sortByUsage");
-  if (savedSorting !== null) {
-    sortByUsage.value = savedSorting === "true";
-  }
 });
-
-const toggleSorting = () => {
-  sortByUsage.value = !sortByUsage.value;
-  localStorage.setItem("sortByUsage", sortByUsage.value.toString());
-};
-
-const categoryColors = {
-  "Osnovne potrebe": "bg-blue-100 hover:bg-blue-200 text-blue-800",
-  Emocije: "bg-pink-100 hover:bg-pink-200 text-pink-800",
-  Odgovori: "bg-green-100 hover:bg-green-200 text-green-800",
-  "Društvena komunikacija": "bg-purple-100 hover:bg-purple-200 text-purple-800",
-  "Zdravlje i tijelo": "bg-red-100 hover:bg-red-200 text-red-800",
-  "Aktivnosti i želje": "bg-yellow-100 hover:bg-yellow-200 text-yellow-800",
-  "Osobe i odnosi": "bg-indigo-100 hover:bg-indigo-200 text-indigo-800",
-  Higijena: "bg-teal-100 hover:bg-teal-200 text-teal-800",
-  Imena: "bg-gray-100 hover:bg-gray-200 text-gray-800",
-};
-
-const buttonUsage = ref<ButtonUsage>({});
 
 const updateButtonUsage = (text: string) => {
   buttonUsage.value[text] = (buttonUsage.value[text] || 0) + 1;
@@ -84,7 +75,7 @@ const buttons = computed(() => {
 
 const sortedButtons = computed(() => {
   const sorted = [...buttons.value];
-  if (sortByUsage.value) {
+  if (props.sortByUsage) {
     return sorted.sort((a, b) => {
       const usageA = buttonUsage.value[a.text] || 0;
       const usageB = buttonUsage.value[b.text] || 0;
@@ -103,7 +94,7 @@ const getButtonsByCategory = (category: string) => {
   return buttons.value.filter((button) => button.category === category);
 };
 
-const playAudio = (audio: string, text: string): void => {
+const playAudio = async (audio: string, text: string): Promise<void> => {
   if (!audio) return;
   const audioPath = `/audio/${audio}.mp3`;
   const audioElement = new Audio(audioPath);
@@ -111,32 +102,21 @@ const playAudio = (audio: string, text: string): void => {
     console.error("Fehler beim Abspielen des Audios:", error);
   });
   updateButtonUsage(text);
+
+  // Log the click
+  try {
+    await $fetch("/api/log-click", {
+      method: "POST",
+      body: { text },
+    });
+  } catch (error) {
+    console.error("Fehler beim Protokollieren des Klicks:", error);
+  }
 };
 </script>
 
 <template>
-  <div class="h-screen w-screen p-2 overflow-auto">
-    <!-- Header mit Toggle -->
-    <div class="flex justify-between items-center mb-4">
-      <div class="flex items-center gap-2">
-        <span class="text-sm">Poredaj prema korištenju</span>
-        <button
-          @click="toggleSorting"
-          :class="[
-            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
-            sortByUsage ? 'bg-indigo-600' : 'bg-gray-200',
-          ]"
-        >
-          <span
-            :class="[
-              'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-              sortByUsage ? 'translate-x-6' : 'translate-x-1',
-            ]"
-          />
-        </button>
-      </div>
-    </div>
-
+  <div class="pt-5 w-screen p-2 overflow-auto">
     <!-- Fixierte Ja/Nein-Buttons -->
     <div class="flex gap-2 mb-4">
       <button
@@ -162,7 +142,7 @@ const playAudio = (audio: string, text: string): void => {
     </div>
 
     <!-- Buttons nach Kategorien -->
-    <template v-if="!sortByUsage">
+    <template v-if="!props.sortByUsage">
       <div v-for="category in categories" :key="category" class="mb-6">
         <h2 class="text-lg font-semibold mb-3">{{ category }}</h2>
         <div
@@ -174,7 +154,7 @@ const playAudio = (audio: string, text: string): void => {
             @click="playAudio(button.audio, button.text)"
             :class="[
               'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
-              categoryColors[category as keyof typeof categoryColors]
+              categoryColors[category],
             ]"
           >
             <component :is="button.icon" class="w-8 h-8 mb-2" />
@@ -198,7 +178,7 @@ const playAudio = (audio: string, text: string): void => {
           @click="playAudio(button.audio, button.text)"
           :class="[
             'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
-            categoryColors[button.category as keyof typeof categoryColors]
+            categoryColors[button.category],
           ]"
         >
           <component :is="button.icon" class="w-8 h-8 mb-2" />
@@ -209,10 +189,5 @@ const playAudio = (audio: string, text: string): void => {
         </button>
       </div>
     </template>
-
-    <div class="flex gap-2 justify-center items-center py-16">
-      <Heart class="fill-red-500 stroke-red-500" /> Najdražoj ujni, za brz
-      oporavak!
-    </div>
   </div>
 </template>
