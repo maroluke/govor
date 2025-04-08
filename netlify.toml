@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install && pnpm prisma generate && pnpm prisma db push && pnpm build"
+  command = "pnpm install && pnpm build"
   publish = ".output/public"
 
 [build.environment]
