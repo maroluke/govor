@@ -103,14 +103,18 @@ const playAudio = async (audio: string, text: string): Promise<void> => {
   });
   updateButtonUsage(text);
 
-  // Log the click
+  // Log the click (nur wenn die API verfügbar ist)
   try {
     await $fetch("/api/log-click", {
       method: "POST",
       body: { text },
+    }).catch(() => {
+      // Ignoriere Fehler beim API-Aufruf
+      console.log("API nicht verfügbar, überspringe Logging");
     });
   } catch (error) {
-    console.error("Fehler beim Protokollieren des Klicks:", error);
+    // Ignoriere Fehler beim API-Aufruf
+    console.log("API nicht verfügbar, überspringe Logging");
   }
 };
 </script>
