@@ -1,11 +1,14 @@
 [build]
-  command = "pnpm install && pnpm build"
+  command = "apt-get update && apt-get install -y python3 make g++ && pnpm install && pnpm build"
   publish = ".output/public"
 
 [build.environment]
   NODE_VERSION = "20"
   DATABASE_URL = "file:./clicks.db"
   NODE_OPTIONS = "--max_old_space_size=4096"
+  npm_config_build_from_source = "true"
+  npm_config_target_arch = "x64"
+  npm_config_target_platform = "linux"
 
 [build.processing]
   skip_processing = true
