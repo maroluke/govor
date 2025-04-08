@@ -4,9 +4,4 @@
 
 [build.environment]
   NODE_VERSION = "20"
-
-[[plugins]]
-  package = "@netlify/plugin-functions"
-
-[functions]
-  included_files = ["clicks.db"] 
+  DATABASE_URL = "file:./clicks.db" 
