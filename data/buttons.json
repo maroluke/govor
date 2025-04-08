@@ -116,6 +116,63 @@
       "text": "Vrtoglavica mi je",
       "icon": "Sparkles",
       "audio": "vrtoglavica_mi_je"
+    },
+    {
+      "text": "Molim te, izmjeri mi tlak",
+      "icon": "HeartPulse",
+      "audio": "molim_te_izmjeri_mi_tlak"
+    }
+  ],
+  "Higijena": [
+    {
+      "text": "Molim te, očisti mi uši",
+      "icon": "Ear",
+      "audio": "molim_te_ocisti_mi_usi"
+    },
+    {
+      "text": "Molim te, odreži mi nokte",
+      "icon": "PocketKnife",
+      "audio": "molim_te_odrezi_mi_nokte"
+    },
+    {
+      "text": "Želim kod frizerke",
+      "icon": "Scissors",
+      "audio": "zelim_kod_frizerke"
+    },
+    {
+      "text": "Molim te, pročešljaj mi kosu",
+      "icon": "Ruler",
+      "audio": "molim_te_pocesljaj_mi_kosu"
+    },
+    {
+      "text": "Našminkaj me",
+      "icon": "EyeClosed",
+      "audio": "nasminkaj_me"
+    },
+    {
+      "text": "Molim te, očisti mi zube",
+      "icon": "Brush",
+      "audio": "molim_te_ocisti_mi_zube"
+    },
+    {
+      "text": "Stavi mi deodorant",
+      "icon": "Rainbow",
+      "audio": "stavi_mi_deodorant"
+    },
+    {
+      "text": "Krema za ruke",
+      "icon": "Hand",
+      "audio": "krema_za_ruke"
+    },
+    {
+      "text": "Stavi mi parfem",
+      "icon": "Flower",
+      "audio": "stavi_mi_parfem"
+    },
+    {
+      "text": "Želim se okupati",
+      "icon": "ShowerHead",
+      "audio": "zelim_se_okupati"
     }
   ],
   "Aktivnosti i želje": [
@@ -141,13 +198,37 @@
       "icon": "PartyPopper",
       "audio": "zelim_plesati"
     },
-    { "text": "Hoću pokljukušu", "icon": "Donut", "audio": "hocu_pokljukusu" },
+    { "text": "Hoću pokljukušu", "icon": "Shell", "audio": "hocu_pokljukusu" },
     {
       "text": "Ugasi svijetlo",
       "icon": "LightbulbOff",
       "audio": "ugasi_svijetlo"
     },
-    { "text": "Upali svijetlo", "icon": "Lightbulb", "audio": "upali_svijetlo" }
+    {
+      "text": "Upali svijetlo",
+      "icon": "Lightbulb",
+      "audio": "upali_svijetlo"
+    },
+    {
+      "text": "Jede mi se kiselo",
+      "icon": "Citrus",
+      "audio": "jede_mi_se_kiselo"
+    },
+    {
+      "text": "Želim unuče",
+      "icon": "Baby",
+      "audio": "zelim_unuce"
+    },
+    {
+      "text": "Želim svirati frulu",
+      "icon": "Cannabis",
+      "audio": "zelim_svirati_frulu"
+    },
+    {
+      "text": "Molim te, stavi mi sesir, maramu ili kapu",
+      "icon": "GraduationCap",
+      "audio": "molim_te_stavi_mi_sesir_maramu_ili_kapu"
+    }
   ],
   "Osobe i odnosi": [
     {

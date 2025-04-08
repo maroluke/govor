@@ -3,6 +3,7 @@ import { computed, ref, onMounted } from "vue";
 import type { Button } from "~/types/button";
 import buttonData from "~/data/buttons.json";
 import * as icons from "lucide-vue-next";
+import { Heart } from "lucide-vue-next";
 
 interface ButtonItem {
   text: string;
@@ -41,6 +42,7 @@ const categoryColors = {
   "Zdravlje i tijelo": "bg-red-100 hover:bg-red-200 text-red-800",
   "Aktivnosti i želje": "bg-yellow-100 hover:bg-yellow-200 text-yellow-800",
   "Osobe i odnosi": "bg-indigo-100 hover:bg-indigo-200 text-indigo-800",
+  Higijena: "bg-teal-100 hover:bg-teal-200 text-teal-800",
   Imena: "bg-gray-100 hover:bg-gray-200 text-gray-800",
 };
 
@@ -207,5 +209,10 @@ const playAudio = (audio: string, text: string): void => {
         </button>
       </div>
     </template>
+
+    <div class="flex gap-2 justify-center items-center py-16">
+      <Heart class="fill-red-500 stroke-red-500" /> Najdražoj ujni, za brz
+      oporavak!
+    </div>
   </div>
 </template>
