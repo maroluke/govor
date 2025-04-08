@@ -115,7 +115,7 @@ const playAudio = (audio: string, text: string): void => {
 </script>
 
 <template>
-  <div class="h-screen w-screen p-4 overflow-auto">
+  <div class="h-screen w-screen p-2 overflow-auto">
     <!-- Header mit Toggle -->
     <div class="flex justify-between items-center mb-4">
       <div class="flex items-center gap-2">
@@ -138,7 +138,7 @@ const playAudio = (audio: string, text: string): void => {
     </div>
 
     <!-- Fixierte Ja/Nein-Buttons -->
-    <div class="flex gap-4 mb-4">
+    <div class="flex gap-2 mb-4">
       <button
         @click="playAudio('da', 'Da')"
         class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
@@ -166,7 +166,7 @@ const playAudio = (audio: string, text: string): void => {
       <div v-for="category in categories" :key="category" class="mb-6">
         <h2 class="text-lg font-semibold mb-3">{{ category }}</h2>
         <div
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"
         >
           <button
             v-for="button in getButtonsByCategory(category)"
@@ -190,7 +190,7 @@ const playAudio = (audio: string, text: string): void => {
     <!-- Buttons nach Nutzung sortiert -->
     <template v-else>
       <div
-        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"
       >
         <button
           v-for="button in sortedButtons"
