@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 
 interface Click {
   id: number;
@@ -190,11 +190,25 @@ const sortBy = (column: string) => {
 
 const fetchClicks = async () => {
   try {
-    clicks.value = await $fetch("/api/clicks");
+    const response = await $fetch("/api/clicks");
+    clicks.value = response as Click[];
   } catch (error) {
     console.error("Fehler beim Laden der Klick-Daten:", error);
   }
 };
+
+let pollInterval: number;
+
+onMounted(() => {
+  fetchClicks();
+  pollInterval = window.setInterval(fetchClicks, 5000);
+});
+
+onUnmounted(() => {
+  if (pollInterval) {
+    clearInterval(pollInterval);
+  }
+});
 
 const deleteClick = async (id: number) => {
   try {
@@ -228,8 +242,4 @@ const exportData = () => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 };
-
-onMounted(() => {
-  fetchClicks();
-});
 </script>

@@ -1,0 +1,7 @@
+-- CreateTable
+CREATE TABLE "ButtonClick" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "buttonText" TEXT NOT NULL,
+    "ipAddress" TEXT NOT NULL,
+    "timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

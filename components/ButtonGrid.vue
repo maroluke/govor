@@ -33,15 +33,23 @@ const props = defineProps<{
 const buttonUsage = ref<ButtonUsage>({});
 
 onMounted(() => {
-  const savedUsage = localStorage.getItem("buttonUsage");
-  if (savedUsage) {
-    buttonUsage.value = JSON.parse(savedUsage);
+  try {
+    const savedUsage = localStorage.getItem("buttonUsage");
+    if (savedUsage) {
+      buttonUsage.value = JSON.parse(savedUsage);
+    }
+  } catch (error) {
+    console.error("Fehler beim Laden aus localStorage:", error);
   }
 });
 
 const updateButtonUsage = (text: string) => {
-  buttonUsage.value[text] = (buttonUsage.value[text] || 0) + 1;
-  localStorage.setItem("buttonUsage", JSON.stringify(buttonUsage.value));
+  try {
+    buttonUsage.value[text] = (buttonUsage.value[text] || 0) + 1;
+    localStorage.setItem("buttonUsage", JSON.stringify(buttonUsage.value));
+  } catch (error) {
+    console.error("Fehler beim Speichern in localStorage:", error);
+  }
 };
 
 const buttons = computed(() => {
@@ -101,20 +109,18 @@ const playAudio = async (audio: string, text: string): Promise<void> => {
   audioElement.play().catch((error) => {
     console.error("Fehler beim Abspielen des Audios:", error);
   });
+
+  // Aktualisiere localStorage
   updateButtonUsage(text);
 
-  // Log the click (nur wenn die API verfügbar ist)
+  // Sende Klick an die API
   try {
     await $fetch("/api/log-click", {
       method: "POST",
       body: { text },
-    }).catch(() => {
-      // Ignoriere Fehler beim API-Aufruf
-      console.log("API nicht verfügbar, überspringe Logging");
     });
   } catch (error) {
-    // Ignoriere Fehler beim API-Aufruf
-    console.log("API nicht verfügbar, überspringe Logging");
+    console.error("Fehler beim Loggen des Klicks:", error);
   }
 };
 </script>

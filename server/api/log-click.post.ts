@@ -10,12 +10,16 @@ export default defineEventHandler(async (event) => {
     event.node.req.socket.remoteAddress ||
     "unknown";
 
-  const click = await prisma.buttonClick.create({
-    data: {
-      buttonText: body.text,
-      ipAddress: ipAddress as string,
-    },
-  });
-
-  return { success: true, click };
+  try {
+    const click = await prisma.buttonClick.create({
+      data: {
+        buttonText: body.text,
+        ipAddress: ipAddress as string,
+      },
+    });
+    return { success: true, click };
+  } catch (error) {
+    console.error("Fehler beim Erstellen des Klicks:", error);
+    return { success: false, error };
+  }
 });
