@@ -46,8 +46,8 @@
     { "text": "Volim te", "icon": "Heart", "audio": "volim_te" }
   ],
   "Odgovori": [
-    { "text": "Da", "icon": "Check", "audio": "da" },
-    { "text": "Ne", "icon": "X", "audio": "ne" },
+    { "text": "Da", "icon": "ThumbsUp", "audio": "da" },
+    { "text": "Ne", "icon": "ThumbsDown", "audio": "ne" },
     { "text": "Možda", "icon": "MessageCircleQuestion", "audio": "mozda" },
     { "text": "Ne znam", "icon": "CircleOff", "audio": "ne_znam" },
     {
