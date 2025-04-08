@@ -4,4 +4,19 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  DATABASE_URL = "file:./clicks.db" 
+  DATABASE_URL = "file:./clicks.db"
+  NODE_OPTIONS = "--max_old_space_size=4096"
+
+[build.processing]
+  skip_processing = true
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.images]
+  compress = true 
