@@ -141,21 +141,21 @@ const playAudio = (audio: string, text: string): void => {
     <div class="flex gap-4 mb-4">
       <button
         @click="playAudio('da', 'Da')"
-        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800"
+        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
       >
         <component :is="icons.Check" class="w-8 h-8" />
         <span class="text-sm text-center">Da</span>
-        <span class="text-xs mt-1 opacity-50"
+        <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
           >({{ buttonUsage["Da"] || 0 }})</span
         >
       </button>
       <button
         @click="playAudio('ne', 'Ne')"
-        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-red-100 hover:bg-red-200 text-red-800"
+        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-red-100 hover:bg-red-200 text-red-800 relative"
       >
         <component :is="icons.X" class="w-8 h-8" />
         <span class="text-sm text-center">Ne</span>
-        <span class="text-xs mt-1 opacity-50"
+        <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
           >({{ buttonUsage["Ne"] || 0 }})</span
         >
       </button>
@@ -173,13 +173,13 @@ const playAudio = (audio: string, text: string): void => {
             :key="button.text"
             @click="playAudio(button.audio, button.text)"
             :class="[
-              'flex flex-col items-center justify-center p-4 rounded-lg transition-colors duration-200 h-32',
+              'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
               categoryColors[category as keyof typeof categoryColors]
             ]"
           >
             <component :is="button.icon" class="w-8 h-8 mb-2" />
             <span class="text-sm text-center">{{ button.text }}</span>
-            <span class="text-xs mt-1 opacity-50"
+            <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
               >({{ buttonUsage[button.text] || 0 }})</span
             >
           </button>
@@ -197,13 +197,13 @@ const playAudio = (audio: string, text: string): void => {
           :key="button.text"
           @click="playAudio(button.audio, button.text)"
           :class="[
-            'flex flex-col items-center justify-center p-4 rounded-lg transition-colors duration-200 h-32',
+            'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
             categoryColors[button.category as keyof typeof categoryColors]
           ]"
         >
           <component :is="button.icon" class="w-8 h-8 mb-2" />
           <span class="text-sm text-center">{{ button.text }}</span>
-          <span class="text-xs mt-1 opacity-50"
+          <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
             >({{ buttonUsage[button.text] || 0 }})</span
           >
         </button>
