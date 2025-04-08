@@ -1,0 +1,12 @@
+[build]
+  command = "pnpm install && pnpm prisma generate && pnpm prisma db push && pnpm build"
+  publish = ".output/public"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-functions"
+
+[functions]
+  included_files = ["clicks.db"] 
