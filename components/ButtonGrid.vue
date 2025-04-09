@@ -232,14 +232,16 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 
   <div class="pt-5 w-screen p-2 overflow-auto">
     <!-- Fixierte Ja/Nein-Buttons -->
-    <div class="flex gap-2 mb-4">
+    <div
+      class="flex gap-2 mb-4 fixed top-0 left-0 right-0 bg-white z-10 p-2 drop-shadow-md"
+    >
       <button
         @click="playAudio('da', 'Da')"
         :disabled="isLoadingAudio"
-        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
+        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
       >
         <component :is="icons.ThumbsUp" class="w-8 h-8" />
-        <span class="text-sm text-center">Da</span>
+        <!-- <span class="text-sm text-center">Da</span> -->
         <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
           >({{ buttonUsage["Da"] || 0 }})</span
         >
@@ -247,10 +249,10 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
       <button
         @click="playAudio('ne', 'Ne')"
         :disabled="isLoadingAudio"
-        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-red-100 hover:bg-red-200 text-red-800 relative"
+        class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 w-full bg-red-100 hover:bg-red-200 text-red-800 relative"
       >
         <component :is="icons.ThumbsDown" class="w-8 h-8" />
-        <span class="text-sm text-center">Ne</span>
+        <!-- <span class="text-sm text-center">Ne</span> -->
         <span class="text-xs mt-1 opacity-40 absolute top-1 right-2"
           >({{ buttonUsage["Ne"] || 0 }})</span
         >
@@ -259,7 +261,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 
     <!-- Buttons nach Kategorien -->
     <template v-if="!props.sortByUsage">
-      <div v-for="category in categories" :key="category" class="mb-6">
+      <div v-for="category in categories" :key="category" class="mb-6 mt-20">
         <h2 class="text-lg font-semibold mb-3">{{ category }}</h2>
         <div
           class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"
@@ -290,7 +292,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
     <!-- Buttons nach Nutzung sortiert -->
     <template v-else>
       <div
-        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 mt-20"
       >
         <button
           v-for="button in sortedButtons"
