@@ -206,14 +206,21 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
   // Aktualisiere localStorage
   updateButtonUsage(text);
 
-  // Sende Klick an die API
+  // Klick absenden
   try {
-    await $fetch("/api/log-click", {
+    // Klick an Prisma-API-Endpunkt senden
+    fetch("/api/log-click", {
       method: "POST",
-      body: { text },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ buttonText: text }),
+    }).catch((error) => {
+      // Fehler beim Loggen ignorieren, damit die lokale Funktionalität weiterhin gegeben ist
+      console.error("Fehler beim Loggen des Klicks:", error);
     });
   } catch (error) {
-    console.error("Fehler beim Loggen des Klicks:", error);
+    // Ignoriere Fehler beim Loggen, damit die App funktioniert, auch wenn die API nicht verfügbar ist
   }
 };
 </script>

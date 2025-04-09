@@ -194,26 +194,26 @@ const sortBy = (column: string) => {
   }
 };
 
+let pollInterval: number;
+
 const fetchClicks = async () => {
   try {
-    const response = await $fetch("/api/clicks");
-    clicks.value = response as Click[];
+    // Klicks über API-Endpunkt abrufen
+    const data = await $fetch("/api/clicks");
+    clicks.value = data;
   } catch (error) {
-    console.error("Fehler beim Laden der Klick-Daten:", error);
+    console.error("Fehler beim Abrufen der Klicks:", error);
   }
 };
 
-let pollInterval: number;
-
 onMounted(() => {
   fetchClicks();
-  pollInterval = window.setInterval(fetchClicks, 5000);
+  // Alle 5 Sekunden aktualisieren
+  pollInterval = setInterval(fetchClicks, 5000);
 });
 
 onUnmounted(() => {
-  if (pollInterval) {
-    clearInterval(pollInterval);
-  }
+  clearInterval(pollInterval);
 });
 
 const deleteClick = async (id: number) => {
@@ -226,13 +226,16 @@ const deleteClick = async (id: number) => {
 };
 
 const deleteAllClicks = async () => {
-  if (confirm("Sind Sie sicher, dass Sie alle Daten löschen möchten?")) {
-    try {
-      await $fetch("/api/clicks", { method: "DELETE" });
-      await fetchClicks();
-    } catch (error) {
-      console.error("Fehler beim Löschen aller Klicks:", error);
-    }
+  if (!confirm("Wirklich alle Klicks löschen?")) return;
+
+  try {
+    // Lösche über den API-Endpunkt
+    await $fetch("/api/clicks", { method: "DELETE" });
+
+    // Aktualisiere die Anzeige
+    fetchClicks();
+  } catch (error) {
+    console.error("Fehler beim Löschen der Klicks:", error);
   }
 };
 
