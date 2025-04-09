@@ -208,8 +208,9 @@ const fetchClicks = async () => {
 
 onMounted(() => {
   fetchClicks();
-  // Alle 5 Sekunden aktualisieren
-  pollInterval = setInterval(fetchClicks, 5000);
+  // Polling-Intervall auf 20 Sekunden erhöht (von 5 Sekunden)
+  // um Datenbankverbindungen zu reduzieren und Timeouts zu vermeiden
+  pollInterval = setInterval(fetchClicks, 20000);
 });
 
 onUnmounted(() => {

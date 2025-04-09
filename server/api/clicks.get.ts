@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    console.log("[API] GET /api/clicks: Starte Abfrage");
+    // Logging komplett entfernt, um Spam zu reduzieren
 
     // Klicks aus Supabase abrufen
     const { data, error } = await supabase
@@ -51,7 +51,6 @@ export default defineEventHandler(async (event) => {
       timestamp: item.timestamp,
     }));
 
-    console.log(`[API] GET /api/clicks: ${data?.length || 0} Klicks gefunden`);
     return formattedData;
   } catch (error) {
     console.error("[API] GET /api/clicks: Fehler:", error);
