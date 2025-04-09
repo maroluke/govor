@@ -226,7 +226,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
   >
     <h1 class="text-2xl font-bold text-gray-700">Govor</h1>
     <div
-      class="loader ease-linear rounded-full border-2 border-t-2 border-t-blue-500 border-gray-200 h-8 w-8 mt-4"
+      class="loader ease-linear rounded-full border-2 border-t-2 border-t-black border-gray-200 h-8 w-8 mt-8"
     ></div>
   </div>
 
