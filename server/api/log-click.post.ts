@@ -21,8 +21,15 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const buttonText = body.buttonText || "Unbekannt";
 
-    // IP-Adresse extrahieren
-    const ipAddress = getRequestIP(event) || "0.0.0.0";
+    // IP-Adresse extrahieren - bessere Unterstützung für Netlify und andere Proxy-Dienste
+    const headers = getHeaders(event);
+    // Wir prüfen verschiedene Header in Reihenfolge ihrer Zuverlässigkeit
+    const ipAddress =
+      headers["cf-connecting-ip"] || // Cloudflare
+      headers["x-real-ip"] || // Nginx
+      headers["x-forwarded-for"]?.split(",")[0] || // Proxy (nimmt nur die erste IP)
+      getRequestIP(event) ||
+      "0.0.0.0";
 
     console.log(
       `[API] POST /api/log-click: Speichere Klick für "${buttonText}" von IP ${ipAddress}`
