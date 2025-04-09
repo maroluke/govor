@@ -4,7 +4,15 @@ export default defineNuxtConfig({
 
   modules: [
     "@nuxtjs/tailwindcss",
-    "@nuxt/content",
+    [
+      "@nuxt/content",
+      {
+        experimental: {
+          // Verwende einen reinen JS-Treiber statt SQLite
+          clientDB: false,
+        },
+      },
+    ],
     "@nuxt/eslint",
     "@nuxt/fonts",
     "@nuxt/image",
