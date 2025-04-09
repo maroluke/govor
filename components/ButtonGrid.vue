@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, reactive } from "vue";
 import type { Button } from "~/types/button";
 import buttonData from "~/data/buttons.json";
 import * as icons from "lucide-vue-next";
 import { Heart } from "lucide-vue-next";
+
+// Interface für die vorgeladenen Audio-Objekte
+interface PreloadedAudios {
+  [key: string]: HTMLAudioElement;
+}
 
 interface ButtonItem {
   text: string;
@@ -31,6 +36,7 @@ const props = defineProps<{
 }>();
 
 const buttonUsage = ref<ButtonUsage>({});
+const preloadedAudios = reactive<PreloadedAudios>({}); // Objekt zum Speichern der Audio-Elemente
 
 onMounted(() => {
   try {
@@ -40,6 +46,26 @@ onMounted(() => {
     }
   } catch (error) {
     console.error("Fehler beim Laden aus localStorage:", error);
+  }
+
+  // Audios vorab laden
+  try {
+    // "Da" und "Ne" Audio vorab laden
+    preloadedAudios["da"] = new Audio("/audio/da.mp3");
+    preloadedAudios["da"].load(); // Optional, aber hilft manchmal beim Caching
+    preloadedAudios["ne"] = new Audio("/audio/ne.mp3");
+    preloadedAudios["ne"].load();
+
+    buttons.value.forEach((button) => {
+      if (button.audio && !preloadedAudios[button.audio]) {
+        const audioPath = `/audio/${button.audio}.mp3`;
+        preloadedAudios[button.audio] = new Audio(audioPath);
+        preloadedAudios[button.audio].load(); // Optional
+      }
+    });
+    console.log("Audios erfolgreich vorgeladen.");
+  } catch (error) {
+    console.error("Fehler beim Vorabladen der Audios:", error);
   }
 });
 
@@ -102,13 +128,26 @@ const getButtonsByCategory = (category: string) => {
   return buttons.value.filter((button) => button.category === category);
 };
 
-const playAudio = async (audio: string, text: string): Promise<void> => {
-  if (!audio) return;
-  const audioPath = `/audio/${audio}.mp3`;
-  const audioElement = new Audio(audioPath);
-  audioElement.play().catch((error) => {
-    console.error("Fehler beim Abspielen des Audios:", error);
-  });
+// Funktion zum Abspielen des vorgeladenen Audios
+const playAudio = async (audioKey: string, text: string): Promise<void> => {
+  const audioElement = preloadedAudios[audioKey];
+  if (!audioElement) {
+    console.error(`Audio für Schlüssel '${audioKey}' nicht gefunden.`);
+    // Fallback: Versuche, das Audio direkt zu laden, falls das Vorabladen fehlschlug
+    const audioPath = `/audio/${audioKey}.mp3`;
+    const fallbackAudio = new Audio(audioPath);
+    fallbackAudio.play().catch((error) => {
+      console.error("Fehler beim Abspielen des Fallback-Audios:", error);
+    });
+  } else {
+    try {
+      // Setze die Wiedergabezeit zurück, um den Sound von vorne abzuspielen
+      audioElement.currentTime = 0;
+      await audioElement.play();
+    } catch (error) {
+      console.error("Fehler beim Abspielen des vorgeladenen Audios:", error);
+    }
+  }
 
   // Aktualisiere localStorage
   updateButtonUsage(text);
