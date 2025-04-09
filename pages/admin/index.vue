@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import AdminView from "~/components/AdminView.vue";
+import AdminView from "@/components/AdminView.vue";
 </script>
