@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: process.env.NODE_ENV !== "production" },
 
   modules: [
     "@nuxtjs/tailwindcss",
@@ -38,6 +38,29 @@ export default defineNuxtConfig({
   vite: {
     json: {
       stringify: true,
+    },
+    // Optimierungen für den Build
+    build: {
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            prisma: ["@prisma/client"],
+          },
+        },
+      },
+    },
+  },
+
+  // Netlify-Deployment-Optimierungen
+  nitro: {
+    preset: "netlify",
+    logLevel: "info",
+    routeRules: {
+      "/api/**": {
+        cors: true,
+        headers: { "access-control-allow-methods": "GET, POST, DELETE" },
+      },
     },
   },
 

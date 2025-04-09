@@ -4,13 +4,35 @@
    
    [build.environment]
      NODE_VERSION = "22"
+     # Umgebungsvariablen für Nuxt
+     NITRO_PRESET = "netlify"
+     # Prisma-Generierung während des Builds erzwingen
+     PRISMA_GENERATE_DATAPROXY = "true"
 
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["@prisma/client", ".prisma"]
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+# Cache-Control-Header für bessere Performance
+[[headers]]
+  for = "/_nuxt/builds/meta/*"
+  [headers.values]
+    cache-control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_nuxt/builds/*"
+  [headers.values]
+    cache-control = "public, max-age=1, immutable"
+
+[[headers]]
+  for = "/_fonts/*"
+  [headers.values]
+    cache-control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_nuxt/*"
+  [headers.values]
+    cache-control = "public, max-age=31536000, immutable"
 
 [build.processing]
   skip_processing = true

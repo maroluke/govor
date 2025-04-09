@@ -1,26 +1,34 @@
 import { PrismaClient } from "@prisma/client";
 
-// PrismaClient ist an den Node.js-Prozess angehängt, wenn in Entwicklung
-// oder als Variable, wenn in Produktion
+// In Netlify Serverless-Funktionen wird jede Funktion in einer eigenen, isolierten Umgebung ausgeführt.
+// Für optimale Performance in der Produktion sollten wir eine Verbindung pro Instanz haben.
+
+// Globale Deklaration für TypeScript
 declare global {
   // eslint-disable-next-line no-var
-  var cachedPrisma: PrismaClient | undefined;
+  var prismaClient: PrismaClient | undefined;
 }
 
-// Verhindern mehrerer Instanzen des Prisma Client in Entwicklung
 export function getPrismaClient(): PrismaClient {
-  if (process.env.NODE_ENV === "production") {
-    // In Produktion - neuer Client, wenn keiner existiert
+  // Prüfe auf Serverless-Umgebung oder Entwicklungsumgebung
+  const isServerless =
+    process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_VERSION;
+
+  if (isServerless) {
+    // In Serverless-Umgebungen - neue Instanz erstellen, wenn nötig
     return new PrismaClient({
       log: ["error"],
+      errorFormat: "minimal",
     });
-  } else {
-    // In Entwicklung - globaler Cache
-    if (!global.cachedPrisma) {
-      global.cachedPrisma = new PrismaClient({
-        log: ["query", "error", "warn"],
-      });
-    }
-    return global.cachedPrisma;
   }
+
+  // In lokaler Entwicklung - global cachen, um Hot Reloading zu unterstützen
+  if (!global.prismaClient) {
+    global.prismaClient = new PrismaClient({
+      log: ["query", "error", "warn"],
+      errorFormat: "pretty",
+    });
+  }
+
+  return global.prismaClient;
 }
