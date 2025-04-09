@@ -2,29 +2,34 @@ import { getPrismaClient } from "../utils/prisma";
 
 export default defineEventHandler(async (event) => {
   try {
-    const prisma = getPrismaClient();
-
+    // Klare Trennung zwischen Fehlertypen
     try {
-      // Logging für Debugging
-      console.log("[API] GET /api/clicks: Starte Datenbankabfrage");
-      console.log(
-        "[API] Datenbankverbindung:",
-        process.env.DATABASE_URL?.substring(0, 25) + "..."
-      );
+      // PrismaClient initialisieren
+      const prisma = getPrismaClient();
 
-      // Verbindung sicherstellen mit Timeout
-      const connectPromise = prisma.$connect();
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Database connection timeout")),
-          10000
-        )
-      );
+      // In einer Netlify-Umgebung kurz warten, um sicherzustellen, dass die Datenbankverbindung hergestellt werden kann
+      if (process.env.NETLIFY) {
+        console.log(
+          "[API] GET /api/clicks: Netlify-Umgebung erkannt, initialisiere Datenbank"
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
 
-      // Entweder die Verbindung oder der Timeout wird zuerst abgeschlossen
-      await Promise.race([connectPromise, timeoutPromise]);
+      // Verbindung zuerst prüfen, bevor Abfragen durchgeführt werden
+      try {
+        await prisma.$connect();
+        console.log("[API] GET /api/clicks: Datenbankverbindung hergestellt");
+      } catch (connError) {
+        console.error(
+          "[API] GET /api/clicks: Datenbankverbindungsfehler:",
+          connError
+        );
+        // In Produktion leere Liste zurückgeben
+        if (process.env.NODE_ENV === "production") return [];
+        throw connError;
+      }
 
-      // Alle Button-Klicks abrufen, sortiert nach Zeitstempel (neueste zuerst)
+      // Abfrage durchführen
       const clicks = await prisma.buttonClick.findMany({
         orderBy: {
           timestamp: "desc",
@@ -32,45 +37,29 @@ export default defineEventHandler(async (event) => {
       });
 
       console.log(`[API] GET /api/clicks: ${clicks.length} Klicks gefunden`);
-
       return clicks;
     } catch (dbError) {
-      // Detailliertere Fehlerprotokollierung
       console.error("[API] GET /api/clicks: Datenbankfehler:", dbError);
 
+      // Im Produktionsmodus immer leere Liste zurückgeben, statt zu scheitern
       if (process.env.NODE_ENV === "production") {
-        // In Produktion leere Liste zurückgeben, statt Fehler zu werfen
         return [];
-      } else {
-        // In Entwicklung für besseres Debugging Fehlerdetails zurückgeben
-        throw createError({
-          statusCode: 500,
-          statusMessage: "Datenbankfehler",
-          data: {
-            message:
-              dbError instanceof Error
-                ? dbError.message
-                : "Unbekannter Datenbankfehler",
-            name: dbError instanceof Error ? dbError.name : "UnknownError",
-          },
-        });
       }
-    } finally {
-      // In Serverless-Umgebungen ist es wichtig, die Verbindung zu schließen
-      if (process.env.NETLIFY) {
-        try {
-          await prisma.$disconnect();
-        } catch (e) {
-          console.error(
-            "[API] Fehler beim Trennen der Datenbankverbindung:",
-            e
-          );
-        }
-      }
+
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Datenbankfehler",
+        data: {
+          message:
+            dbError instanceof Error
+              ? dbError.message
+              : "Unbekannter Datenbankfehler",
+        },
+      });
     }
-  } catch (error) {
-    // Fallback für unerwartete Fehler
-    console.error("[API] GET /api/clicks: Unerwarteter Fehler:", error);
+  } catch (generalError) {
+    console.error("[API] GET /api/clicks: Unbehandelter Fehler:", generalError);
+    // Immer eine leere Liste zurückgeben im Fehlerfall in Produktion
     return [];
   }
 });

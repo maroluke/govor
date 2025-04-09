@@ -11,46 +11,54 @@ declare global {
 
 let prismaInstance: PrismaClient | undefined = undefined;
 
+/**
+ * Liefert eine PrismaClient-Instanz, die für die Netlify-Umgebung optimiert ist
+ */
 export function getPrismaClient(): PrismaClient {
-  // Prüfe auf Serverless-Umgebung oder Entwicklungsumgebung
-  const isServerless =
-    process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_VERSION;
+  // Spezielle Behandlung für Netlify
+  if (process.env.NETLIFY) {
+    try {
+      if (!prismaInstance) {
+        console.log(
+          "[PRISMA] Initialisiere Prisma-Client für Netlify-Umgebung"
+        );
+        prismaInstance = new PrismaClient({
+          log: ["error"],
+          errorFormat: "minimal",
+        });
 
-  if (isServerless) {
-    // In Serverless-Umgebungen - wir verwenden eine neue Instanz für jede Funktion
-    // aber versuchen, sie innerhalb einer Funktion wiederzuverwenden
-    if (!prismaInstance) {
+        // Explizit die Verbindung herstellen
+        prismaInstance
+          .$connect()
+          .then(() =>
+            console.log("[PRISMA] Verbindung erfolgreich hergestellt")
+          )
+          .catch((e) => console.error("[PRISMA] Verbindungsfehler:", e));
+      }
+      return prismaInstance;
+    } catch (e) {
+      console.error("[PRISMA] Fehler bei der Prisma-Initialisierung:", e);
+      // Fallback-Instanz zurückgeben, wenn etwas schief geht
+      return new PrismaClient();
+    }
+  }
+
+  // Für andere Umgebungen (Entwicklung, etc.)
+  if (process.env.NODE_ENV === "development") {
+    if (global.prismaClient === undefined) {
       console.log(
-        "[PRISMA] Initialisiere neue PrismaClient-Instanz für Serverless"
+        "[PRISMA] Initialisiere globale PrismaClient-Instanz für Entwicklung"
       );
-      prismaInstance = new PrismaClient({
-        log: process.env.DEBUG ? ["query", "error", "warn"] : ["error"],
-        errorFormat: "minimal",
-      });
-
-      // Verbindung vorwärmen für schnellere erste Anfrage
-      prismaInstance.$connect().catch((e) => {
-        console.error("[PRISMA] Fehler beim Verbindungsaufbau:", e);
+      global.prismaClient = new PrismaClient({
+        log: ["query", "error", "warn"],
       });
     }
-    return prismaInstance;
+    return global.prismaClient;
   }
 
-  // In lokaler Entwicklung - global cachen, um Hot Reloading zu unterstützen
-  if (global.prismaClient === undefined) {
-    console.log(
-      "[PRISMA] Initialisiere globale PrismaClient-Instanz für Entwicklung"
-    );
-    global.prismaClient = new PrismaClient({
-      log: ["query", "error", "warn"],
-      errorFormat: "pretty",
-    });
-
-    // Verbindung vorwärmen für schnellere erste Anfrage
-    global.prismaClient.$connect().catch((e) => {
-      console.error("[PRISMA] Fehler beim Verbindungsaufbau:", e);
-    });
+  // Fallback für andere Umgebungen
+  if (!prismaInstance) {
+    prismaInstance = new PrismaClient();
   }
-
-  return global.prismaClient;
+  return prismaInstance;
 }

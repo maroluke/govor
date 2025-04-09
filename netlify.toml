@@ -1,5 +1,5 @@
 [build]
-     command = "pnpm install && NODE_ENV=production DEBUG=* pnpm build"
+     command = "npx prisma generate && pnpm install && pnpm build"
      publish = "dist"
    
    [build.environment]
@@ -7,7 +7,7 @@
      # Umgebungsvariablen für Nuxt
      NITRO_PRESET = "netlify"
      # Prisma-Generierung während des Builds erzwingen
-     PRISMA_GENERATE_DATAPROXY = "true"
+     PRISMA_GENERATE_SKIP_AUTOINSTALL = "true"
      # Bessere Fehlerbehandlung
      NODE_OPTIONS = "--unhandled-rejections=strict"
 
