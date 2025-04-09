@@ -1,32 +1,53 @@
-import { getPrismaClient } from "../utils/prisma";
+import { createClient } from "@supabase/supabase-js";
 
 export default defineEventHandler(async (event) => {
-  const prisma = getPrismaClient();
+  // Supabase Konfiguration aus Umgebungsvariablen
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[API] DELETE /api/clicks: Supabase-Konfiguration fehlt");
+    throw createError({
+      statusCode: 500,
+      statusMessage:
+        "Server-Konfigurationsfehler: Supabase-Konfiguration fehlt",
+    });
+  }
+
+  // Supabase Client initialisieren
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    // Verbindung sicherstellen
-    await prisma.$connect();
+    console.log("[API] DELETE /api/clicks: Lösche alle Klicks");
 
-    console.log("DELETE /api/clicks: Lösche alle Klicks");
+    // Alle Einträge in der Tabelle löschen
+    const { error, count } = await supabase
+      .from("button_clicks")
+      .delete({ count: "exact" })
+      .not("button_text", "is", null); // Diese Bedingung ist immer wahr, wird aber von Supabase benötigt
 
-    // Alle Button-Klicks löschen
-    const deletedCount = await prisma.buttonClick.deleteMany({});
+    if (error) {
+      console.error("[API] DELETE /api/clicks: Supabase-Fehler:", error);
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Fehler beim Löschen der Klicks: ${error.message}`,
+      });
+    }
 
-    console.log(`DELETE /api/clicks: ${deletedCount.count} Klicks gelöscht`);
+    console.log(`[API] DELETE /api/clicks: ${count || 0} Klicks gelöscht`);
 
     return {
       success: true,
-      message: `${deletedCount.count} Klicks wurden gelöscht`,
+      message: `${count || 0} Klicks wurden gelöscht`,
     };
-  } catch (error) {
-    console.error(
-      "DELETE /api/clicks: Fehler beim Löschen der Button-Klicks:",
-      error
-    );
-    return {
-      success: false,
-      error: "Datenbankfehler",
-      message: error instanceof Error ? error.message : "Unbekannter Fehler",
-    };
+  } catch (error: unknown) {
+    console.error("[API] DELETE /api/clicks: Fehler:", error);
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Fehler beim Löschen der Klicks: ${
+        (error as Error)?.message || "Unbekannter Fehler"
+      }`,
+    });
   }
 });

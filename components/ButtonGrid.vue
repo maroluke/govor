@@ -208,7 +208,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 
   // Klick absenden
   try {
-    // Klick an Prisma-API-Endpunkt senden
+    // Klick an API-Endpunkt senden
     fetch("/api/log-click", {
       method: "POST",
       headers: {

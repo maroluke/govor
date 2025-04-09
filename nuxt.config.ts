@@ -42,13 +42,6 @@ export default defineNuxtConfig({
     // Optimierungen für den Build
     build: {
       sourcemap: false,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            prisma: ["@prisma/client"],
-          },
-        },
-      },
     },
   },
 

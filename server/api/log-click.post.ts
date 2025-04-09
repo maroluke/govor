@@ -1,42 +1,62 @@
-import { getPrismaClient } from "../utils/prisma";
+import { createClient } from "@supabase/supabase-js";
 
 export default defineEventHandler(async (event) => {
-  const prisma = getPrismaClient();
+  // Supabase-Client initialisieren
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("[API] POST /api/log-click: Supabase-Konfiguration fehlt");
+    throw createError({
+      statusCode: 500,
+      statusMessage:
+        "Server-Konfigurationsfehler: Supabase-Konfiguration fehlt",
+    });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
-    // Verbindung sicherstellen
-    await prisma.$connect();
-
+    // Daten aus der Anfrage lesen
     const body = await readBody(event);
     const buttonText = body.buttonText || "Unbekannt";
+
+    // IP-Adresse extrahieren
     const ipAddress = getRequestIP(event) || "0.0.0.0";
 
-    console.log(`POST /api/log-click: Speichere Klick für "${buttonText}"`);
-
-    // Button-Klick in der Datenbank speichern
-    const click = await prisma.buttonClick.create({
-      data: {
-        buttonText,
-        ipAddress,
-        timestamp: new Date(),
-      },
-    });
-
-    console.log(`POST /api/log-click: Klick gespeichert mit ID ${click.id}`);
-
-    return {
-      success: true,
-      data: click,
-    };
-  } catch (error) {
-    console.error(
-      "POST /api/log-click: Fehler beim Speichern des Button-Klicks:",
-      error
+    console.log(
+      `[API] POST /api/log-click: Speichere Klick für "${buttonText}" von IP ${ipAddress}`
     );
-    return {
-      success: false,
-      error: "Datenbankfehler",
-      message: error instanceof Error ? error.message : "Unbekannter Fehler",
-    };
+
+    // Klick in Supabase speichern
+    const { data, error } = await supabase
+      .from("button_clicks")
+      .insert([
+        {
+          button_text: buttonText,
+          ip_address: ipAddress,
+          timestamp: new Date().toISOString(),
+        },
+      ])
+      .select();
+
+    if (error) {
+      console.error("[API] POST /api/log-click: Supabase-Fehler:", error);
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Fehler beim Speichern des Klicks: ${error.message}`,
+      });
+    }
+
+    console.log(`[API] POST /api/log-click: Klick erfolgreich gespeichert`);
+    return { success: true, data };
+  } catch (error: any) {
+    console.error("[API] POST /api/log-click: Fehler:", error);
+
+    throw createError({
+      statusCode: 500,
+      statusMessage:
+        error.message || "Unbekannter Fehler beim Verarbeiten des Klicks",
+    });
   }
 });
