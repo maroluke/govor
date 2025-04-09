@@ -5,9 +5,9 @@ import buttonData from "~/data/buttons.json";
 import * as icons from "lucide-vue-next";
 import { Heart } from "lucide-vue-next";
 
-// Interface für die vorgeladenen Audio-Objekte
-interface PreloadedAudios {
-  [key: string]: HTMLAudioElement;
+// Interface für die AudioBuffer
+interface PreloadedAudioBuffers {
+  [key: string]: AudioBuffer;
 }
 
 interface ButtonItem {
@@ -31,14 +31,19 @@ const categoryColors = {
   "Osobe i odnosi": "bg-teal-100 hover:bg-teal-200 text-teal-800",
 } as const;
 
+type Category = keyof typeof categoryColors; // Typ für Kategorien hinzufügen
+
 const props = defineProps<{
   sortByUsage: boolean;
 }>();
 
 const buttonUsage = ref<ButtonUsage>({});
-const preloadedAudios = reactive<PreloadedAudios>({}); // Objekt zum Speichern der Audio-Elemente
+// Web Audio API Context (nur einmal erstellen)
+let audioContext: AudioContext | null = null;
+const preloadedAudioBuffers = reactive<PreloadedAudioBuffers>({});
+const isLoadingAudio = ref(true); // Ladezustand für optionales UI-Feedback
 
-onMounted(() => {
+onMounted(async () => {
   try {
     const savedUsage = localStorage.getItem("buttonUsage");
     if (savedUsage) {
@@ -48,24 +53,82 @@ onMounted(() => {
     console.error("Fehler beim Laden aus localStorage:", error);
   }
 
-  // Audios vorab laden
+  // AudioContext initialisieren (erst nach Nutzerinteraktion, aber hier im Mount für Preloading)
+  // Beachte: In manchen Browsern muss der Context nach einer User-Geste gestartet werden.
+  // Wenn es Probleme gibt, muss die Initialisierung evtl. in den ersten Klick-Handler.
   try {
-    // "Da" und "Ne" Audio vorab laden
-    preloadedAudios["da"] = new Audio("/audio/da.mp3");
-    preloadedAudios["da"].load(); // Optional, aber hilft manchmal beim Caching
-    preloadedAudios["ne"] = new Audio("/audio/ne.mp3");
-    preloadedAudios["ne"].load();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  } catch (e) {
+    console.error("Web Audio API wird nicht unterstützt", e);
+    isLoadingAudio.value = false;
+    return; // Ohne AudioContext kein Preloading möglich
+  }
 
-    buttons.value.forEach((button) => {
-      if (button.audio && !preloadedAudios[button.audio]) {
-        const audioPath = `/audio/${button.audio}.mp3`;
-        preloadedAudios[button.audio] = new Audio(audioPath);
-        preloadedAudios[button.audio].load(); // Optional
+  // Funktion zum Laden und Dekodieren einer einzelnen Datei
+  const loadAndDecodeAudio = async (key: string, path: string) => {
+    if (!audioContext) return;
+    try {
+      const response = await fetch(path);
+      if (!response.ok) {
+        throw new Error(`HTTP-Fehler ${response.status} für ${path}`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await (audioContext as AudioContext).decodeAudioData(arrayBuffer);
+      preloadedAudioBuffers[key] = audioBuffer;
+    } catch (error) {
+      console.error(`Fehler beim Laden/Dekodieren von ${key} (${path}):`, error);
+    }
+  };
+
+  // Ladevorgänge starten
+  const loadPromises: Promise<void>[] = [];
+  loadPromises.push(loadAndDecodeAudio("da", "/audio/da.mp3"));
+  loadPromises.push(loadAndDecodeAudio("ne", "/audio/ne.mp3"));
+
+  const buttons = computed(() => {
+    const result: Button[] = [];
+    const uniqueButtons = new Set<string>();
+
+    Object.entries(buttonData).forEach(([category, items]) => {
+      if (Array.isArray(items)) {
+        items.forEach((item: ButtonItem) => {
+          if (
+            item.text !== "Da" &&
+            item.text !== "Ne" &&
+            item.text &&
+            item.icon &&
+            !uniqueButtons.has(item.text)
+          ) {
+            uniqueButtons.add(item.text);
+            result.push({
+              text: item.text,
+              icon: icons[item.icon as keyof typeof icons],
+              category,
+              audio: item.audio,
+            });
+          }
+        });
       }
     });
-    console.log("Audios erfolgreich vorgeladen.");
+
+    return result;
+  });
+
+  buttons.value.forEach((button) => {
+    if (button.audio && !preloadedAudioBuffers[button.audio]) {
+      const audioPath = `/audio/${button.audio}.mp3`;
+      loadPromises.push(loadAndDecodeAudio(button.audio, audioPath));
+    }
+  });
+
+  // Warten, bis alle Audios geladen und dekodiert sind
+  try {
+    await Promise.all(loadPromises);
+    console.log("Alle Audios erfolgreich vorgeladen und dekodiert.");
   } catch (error) {
-    console.error("Fehler beim Vorabladen der Audios:", error);
+    console.error("Fehler während des Audio-Preloadings:", error);
+  } finally {
+    isLoadingAudio.value = false; // Ladezustand beenden
   }
 });
 
@@ -77,35 +140,6 @@ const updateButtonUsage = (text: string) => {
     console.error("Fehler beim Speichern in localStorage:", error);
   }
 };
-
-const buttons = computed(() => {
-  const result: Button[] = [];
-  const uniqueButtons = new Set<string>();
-
-  Object.entries(buttonData).forEach(([category, items]) => {
-    if (Array.isArray(items)) {
-      items.forEach((item: ButtonItem) => {
-        if (
-          item.text !== "Da" &&
-          item.text !== "Ne" &&
-          item.text &&
-          item.icon &&
-          !uniqueButtons.has(item.text)
-        ) {
-          uniqueButtons.add(item.text);
-          result.push({
-            text: item.text,
-            icon: icons[item.icon as keyof typeof icons],
-            category,
-            audio: item.audio,
-          });
-        }
-      });
-    }
-  });
-
-  return result;
-});
 
 const sortedButtons = computed(() => {
   const sorted = [...buttons.value];
@@ -124,29 +158,41 @@ const categories = computed(() => {
   return Object.keys(buttonData);
 });
 
-const getButtonsByCategory = (category: string) => {
+const getButtonsByCategory = (category: string): Button[] => { // Rückgabetyp hinzufügen
   return buttons.value.filter((button) => button.category === category);
 };
 
-// Funktion zum Abspielen des vorgeladenen Audios
+// Funktion zum Abspielen des dekodierten AudioBuffers
 const playAudio = async (audioKey: string, text: string): Promise<void> => {
-  const audioElement = preloadedAudios[audioKey];
-  if (!audioElement) {
-    console.error(`Audio für Schlüssel '${audioKey}' nicht gefunden.`);
-    // Fallback: Versuche, das Audio direkt zu laden, falls das Vorabladen fehlschlug
-    const audioPath = `/audio/${audioKey}.mp3`;
-    const fallbackAudio = new Audio(audioPath);
-    fallbackAudio.play().catch((error) => {
-      console.error("Fehler beim Abspielen des Fallback-Audios:", error);
-    });
-  } else {
+  if (!audioContext) {
+    console.error("AudioContext nicht initialisiert.");
+    return;
+  }
+
+  // Wenn der Context noch nicht durch eine User-Geste "resumed" wurde (Autoplay Policy)
+  if (audioContext.state === "suspended") {
     try {
-      // Setze die Wiedergabezeit zurück, um den Sound von vorne abzuspielen
-      audioElement.currentTime = 0;
-      await audioElement.play();
-    } catch (error) {
-      console.error("Fehler beim Abspielen des vorgeladenen Audios:", error);
+      await audioContext.resume();
+    } catch (e) {
+      console.error("Fehler beim Fortsetzen des AudioContext:", e);
+      return;
     }
+  }
+
+  const audioBuffer = preloadedAudioBuffers[audioKey];
+  if (!audioBuffer) {
+    console.error(`AudioBuffer für Schlüssel '${audioKey}' nicht gefunden oder nicht dekodiert.`);
+    // Hier könnte man einen Fallback implementieren, z.B. direkt laden?
+    return;
+  }
+
+  try {
+    const source = (audioContext as AudioContext).createBufferSource(); // Quelle erstellen
+    source.buffer = audioBuffer; // Buffer zuweisen
+    source.connect((audioContext as AudioContext).destination); // Mit Lautsprecher verbinden
+    source.start(0); // Sofort abspielen
+  } catch (error) {
+    console.error("Fehler beim Abspielen des AudioBuffers:", error);
   }
 
   // Aktualisiere localStorage
@@ -166,10 +212,16 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 
 <template>
   <div class="pt-5 w-screen p-2 overflow-auto">
+    <!-- Optional: Ladeanzeige -->
+    <div v-if="isLoadingAudio" class="text-center p-4 text-gray-500">
+      Audios werden geladen...
+    </div>
+
     <!-- Fixierte Ja/Nein-Buttons -->
     <div class="flex gap-2 mb-4">
       <button
         @click="playAudio('da', 'Da')"
+        :disabled="isLoadingAudio" // Optional: Deaktivieren während des Ladens
         class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
       >
         <component :is="icons.ThumbsUp" class="w-8 h-8" />
@@ -180,6 +232,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
       </button>
       <button
         @click="playAudio('ne', 'Ne')"
+        :disabled="isLoadingAudio"
         class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-red-100 hover:bg-red-200 text-red-800 relative"
       >
         <component :is="icons.ThumbsDown" class="w-8 h-8" />
@@ -201,9 +254,10 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
             v-for="button in getButtonsByCategory(category)"
             :key="button.text"
             @click="playAudio(button.audio, button.text)"
+            :disabled="isLoadingAudio || !preloadedAudioBuffers[button.audio]" // Optional
             :class="[
               'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
-              categoryColors[category],
+              categoryColors[category as Category], // Kategorie explizit typisieren
             ]"
           >
             <component :is="button.icon" class="w-8 h-8 mb-2" />
@@ -217,8 +271,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
     </template>
 
     <!-- Buttons nach Nutzung sortiert -->
-    <template v-else
-      >asdf
+    <template v-else>
       <div
         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"
       >
@@ -226,9 +279,10 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
           v-for="button in sortedButtons"
           :key="button.text"
           @click="playAudio(button.audio, button.text)"
+          :disabled="isLoadingAudio || !preloadedAudioBuffers[button.audio]" // Optional
           :class="[
             'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
-            categoryColors[button.category],
+            categoryColors[button.category as Category], // Kategorie explizit typisieren
           ]"
         >
           <component :is="button.icon" class="w-8 h-8 mb-2" />
