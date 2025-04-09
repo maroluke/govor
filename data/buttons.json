@@ -41,7 +41,6 @@
       "icon": "AlertCircle",
       "audio": "frustrirana_sam"
     },
-    { "text": "Molim te", "icon": "HandHeart", "audio": "molim_te" },
     { "text": "Volim te", "icon": "Heart", "audio": "volim_te" }
   ],
   "Odgovori": [
@@ -87,7 +86,8 @@
       "audio": "dodji_blize_molim_te"
     },
     { "text": "Molim te, idi", "icon": "Maximize2", "audio": "molim_te_idi" },
-    { "text": "Ideš mi na živce", "icon": "Zap", "audio": "ides_mi_na_zivce" }
+    { "text": "Ideš mi na živce", "icon": "Zap", "audio": "ides_mi_na_zivce" },
+    { "text": "Molim te", "icon": "HandHeart", "audio": "molim_te" }
   ],
   "Zdravlje i tijelo": [
     {
