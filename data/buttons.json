@@ -41,13 +41,13 @@
       "icon": "AlertCircle",
       "audio": "frustrirana_sam"
     },
-    { "text": "Hvala ti", "icon": "MessageCircleHeart", "audio": "hvala_ti" },
     { "text": "Molim te", "icon": "HandHeart", "audio": "molim_te" },
     { "text": "Volim te", "icon": "Heart", "audio": "volim_te" }
   ],
   "Odgovori": [
     { "text": "Da", "icon": "ThumbsUp", "audio": "da" },
     { "text": "Ne", "icon": "ThumbsDown", "audio": "ne" },
+    { "text": "Hvala ti", "icon": "MessageCircleHeart", "audio": "hvala_ti" },
     { "text": "Možda", "icon": "MessageCircleQuestion", "audio": "mozda" },
     { "text": "Ne znam", "icon": "CircleOff", "audio": "ne_znam" },
     {
