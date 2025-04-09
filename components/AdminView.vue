@@ -194,8 +194,6 @@ const sortBy = (column: string) => {
   }
 };
 
-let pollInterval: NodeJS.Timeout;
-
 const fetchClicks = async () => {
   try {
     // Klicks über API-Endpunkt abrufen
@@ -208,13 +206,6 @@ const fetchClicks = async () => {
 
 onMounted(() => {
   fetchClicks();
-  // Polling-Intervall auf 20 Sekunden erhöht (von 5 Sekunden)
-  // um Datenbankverbindungen zu reduzieren und Timeouts zu vermeiden
-  pollInterval = setInterval(fetchClicks, 20000);
-});
-
-onUnmounted(() => {
-  clearInterval(pollInterval);
 });
 
 const deleteClick = async (id: number) => {
