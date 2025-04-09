@@ -228,8 +228,11 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 <template>
   <!-- Full-screen Loading Overlay -->
   <div
-    v-if="isLoadingAudio"
-    class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center"
+    v-show="isLoadingAudio !== null"
+    :class="[
+      'fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-500',
+      { 'opacity-0 pointer-events-none': !isLoadingAudio },
+    ]"
   >
     <h1 class="text-2xl font-bold text-gray-700">Govor</h1>
     <div
