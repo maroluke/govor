@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     const { error, count } = await supabase
       .from("button_clicks")
       .delete({ count: "exact" })
-      .not("button_text", "is", null); // Diese Bedingung ist immer wahr, wird aber von Supabase benötigt
+      .not("buttonText", "is", null); // Bedingung angepasst
 
     if (error) {
       console.error("[API] DELETE /api/clicks: Supabase-Fehler:", error);

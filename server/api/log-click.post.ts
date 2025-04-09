@@ -33,8 +33,8 @@ export default defineEventHandler(async (event) => {
       .from("button_clicks")
       .insert([
         {
-          button_text: buttonText,
-          ip_address: ipAddress,
+          buttonText: buttonText,
+          ipAdress: ipAddress,
           timestamp: new Date().toISOString(),
         },
       ])

@@ -43,8 +43,16 @@ export default defineEventHandler(async (event) => {
       });
     }
 
+    // Spaltennamen für die Oberfläche anpassen
+    const formattedData = (data || []).map((item) => ({
+      id: item.id,
+      buttonText: item.buttonText,
+      ipAddress: item.ipAdress, // Anpassung: ipAdress (Datenbank) -> ipAddress (Oberfläche)
+      timestamp: item.timestamp,
+    }));
+
     console.log(`[API] GET /api/clicks: ${data?.length || 0} Klicks gefunden`);
-    return data || [];
+    return formattedData;
   } catch (error) {
     console.error("[API] GET /api/clicks: Fehler:", error);
     // Im Produktionsmodus leere Liste zurückgeben
