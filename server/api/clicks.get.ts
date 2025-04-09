@@ -1,15 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-
-// Dies stellt sicher, dass in serverless Umgebungen nur eine Instanz erstellt wird
-const prisma = new PrismaClient();
+import { getPrismaClient } from "~/server/utils/prisma";
 
 export default defineEventHandler(async (event) => {
+  // Gemeinsame Prisma-Instanz verwenden
+  const prisma = getPrismaClient();
+
   try {
-    console.log("API: Verbindung zur Datenbank wird hergestellt...");
+    console.log(
+      "API GET /api/clicks: Verbindung zur Datenbank wird hergestellt..."
+    );
 
     // Zusätzliche Verbindungsprüfung
     await prisma.$connect();
-    console.log("API: Verbindung zur Datenbank hergestellt");
+    console.log("API GET /api/clicks: Verbindung zur Datenbank hergestellt");
 
     const clicks = await prisma.buttonClick.findMany({
       orderBy: {
@@ -17,10 +19,10 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    console.log(`API: ${clicks.length} Klicks gefunden`);
+    console.log(`API GET /api/clicks: ${clicks.length} Klicks gefunden`);
     return clicks;
   } catch (error: unknown) {
-    console.error("Detaillierter Fehler beim Abrufen der Klicks:", {
+    console.error("API GET /api/clicks: Fehler beim Abrufen der Klicks:", {
       message: (error as Error)?.message || "Unbekannter Fehler",
       name: (error as Error)?.name,
       stack: (error as Error)?.stack,
@@ -29,7 +31,7 @@ export default defineEventHandler(async (event) => {
     });
 
     // Strukturierter Fehler für besseres Debugging
-    return createError({
+    throw createError({
       statusCode: 500,
       statusMessage: `Datenbankfehler: ${
         (error as Error)?.message || "Unbekannter Fehler"
@@ -40,7 +42,7 @@ export default defineEventHandler(async (event) => {
       },
     });
   } finally {
-    // Verbindung immer schließen
-    await prisma.$disconnect();
+    // In der gemeinsamen Instanz besser nicht trennen
+    // await prisma.$disconnect();
   }
 });

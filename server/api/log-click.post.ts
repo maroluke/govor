@@ -1,8 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { getPrismaClient } from "~/server/utils/prisma";
 
 export default defineEventHandler(async (event) => {
+  // Gemeinsame Prisma-Instanz verwenden
+  const prisma = getPrismaClient();
+
   const body = await readBody(event);
   const headers = getRequestHeaders(event);
   const ipAddress =
@@ -57,7 +58,7 @@ export default defineEventHandler(async (event) => {
       },
     });
   } finally {
-    // Verbindung immer schließen
-    await prisma.$disconnect();
+    // In der gemeinsamen Instanz besser nicht trennen
+    // await prisma.$disconnect();
   }
 });

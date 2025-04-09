@@ -1,8 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { getPrismaClient } from "~/server/utils/prisma";
 
 export default defineEventHandler(async (event) => {
+  // Gemeinsame Prisma-Instanz verwenden
+  const prisma = getPrismaClient();
+
   console.log("API DELETE /api/clicks: Löschvorgang gestartet");
   try {
     const deleteResult = await prisma.buttonClick.deleteMany({});
@@ -28,7 +29,7 @@ export default defineEventHandler(async (event) => {
       },
     });
   } finally {
-    // Verbindung sicher schließen
-    await prisma.$disconnect();
+    // In der gemeinsamen Instanz besser nicht trennen
+    // await prisma.$disconnect();
   }
 });
