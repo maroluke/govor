@@ -19,22 +19,24 @@ export default defineEventHandler(async (event) => {
 
     console.log(`API: ${clicks.length} Klicks gefunden`);
     return clicks;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Detaillierter Fehler beim Abrufen der Klicks:", {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-      code: error.code,
-      meta: error.meta,
+      message: (error as Error)?.message || "Unbekannter Fehler",
+      name: (error as Error)?.name,
+      stack: (error as Error)?.stack,
+      code: (error as any)?.code,
+      meta: (error as any)?.meta,
     });
 
     // Strukturierter Fehler für besseres Debugging
     return createError({
       statusCode: 500,
-      statusMessage: `Datenbankfehler: ${error.message}`,
+      statusMessage: `Datenbankfehler: ${
+        (error as Error)?.message || "Unbekannter Fehler"
+      }`,
       data: {
-        errorCode: error.code,
-        errorMeta: error.meta,
+        errorCode: (error as any)?.code,
+        errorMeta: (error as any)?.meta,
       },
     });
   } finally {
