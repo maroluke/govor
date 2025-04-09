@@ -43,6 +43,35 @@ let audioContext: AudioContext | null = null;
 const preloadedAudioBuffers = reactive<PreloadedAudioBuffers>({});
 const isLoadingAudio = ref(true); // Ladezustand für optionales UI-Feedback
 
+const buttons = computed(() => {
+  const result: Button[] = [];
+  const uniqueButtons = new Set<string>();
+
+  Object.entries(buttonData).forEach(([category, items]) => {
+    if (Array.isArray(items)) {
+      items.forEach((item: ButtonItem) => {
+        if (
+          item.text !== "Da" &&
+          item.text !== "Ne" &&
+          item.text &&
+          item.icon &&
+          !uniqueButtons.has(item.text)
+        ) {
+          uniqueButtons.add(item.text);
+          result.push({
+            text: item.text,
+            icon: icons[item.icon as keyof typeof icons],
+            category,
+            audio: item.audio,
+          });
+        }
+      });
+    }
+  });
+
+  return result;
+});
+
 onMounted(async () => {
   try {
     const savedUsage = localStorage.getItem("buttonUsage");
@@ -73,10 +102,15 @@ onMounted(async () => {
         throw new Error(`HTTP-Fehler ${response.status} für ${path}`);
       }
       const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await (audioContext as AudioContext).decodeAudioData(arrayBuffer);
+      const audioBuffer = await (audioContext as AudioContext).decodeAudioData(
+        arrayBuffer
+      );
       preloadedAudioBuffers[key] = audioBuffer;
     } catch (error) {
-      console.error(`Fehler beim Laden/Dekodieren von ${key} (${path}):`, error);
+      console.error(
+        `Fehler beim Laden/Dekodieren von ${key} (${path}):`,
+        error
+      );
     }
   };
 
@@ -84,35 +118,6 @@ onMounted(async () => {
   const loadPromises: Promise<void>[] = [];
   loadPromises.push(loadAndDecodeAudio("da", "/audio/da.mp3"));
   loadPromises.push(loadAndDecodeAudio("ne", "/audio/ne.mp3"));
-
-  const buttons = computed(() => {
-    const result: Button[] = [];
-    const uniqueButtons = new Set<string>();
-
-    Object.entries(buttonData).forEach(([category, items]) => {
-      if (Array.isArray(items)) {
-        items.forEach((item: ButtonItem) => {
-          if (
-            item.text !== "Da" &&
-            item.text !== "Ne" &&
-            item.text &&
-            item.icon &&
-            !uniqueButtons.has(item.text)
-          ) {
-            uniqueButtons.add(item.text);
-            result.push({
-              text: item.text,
-              icon: icons[item.icon as keyof typeof icons],
-              category,
-              audio: item.audio,
-            });
-          }
-        });
-      }
-    });
-
-    return result;
-  });
 
   buttons.value.forEach((button) => {
     if (button.audio && !preloadedAudioBuffers[button.audio]) {
@@ -158,7 +163,8 @@ const categories = computed(() => {
   return Object.keys(buttonData);
 });
 
-const getButtonsByCategory = (category: string): Button[] => { // Rückgabetyp hinzufügen
+const getButtonsByCategory = (category: string): Button[] => {
+  // Rückgabetyp hinzufügen
   return buttons.value.filter((button) => button.category === category);
 };
 
@@ -181,7 +187,9 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 
   const audioBuffer = preloadedAudioBuffers[audioKey];
   if (!audioBuffer) {
-    console.error(`AudioBuffer für Schlüssel '${audioKey}' nicht gefunden oder nicht dekodiert.`);
+    console.error(
+      `AudioBuffer für Schlüssel '${audioKey}' nicht gefunden oder nicht dekodiert.`
+    );
     // Hier könnte man einen Fallback implementieren, z.B. direkt laden?
     return;
   }
@@ -211,17 +219,23 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
 </script>
 
 <template>
-  <div class="pt-5 w-screen p-2 overflow-auto">
-    <!-- Optional: Ladeanzeige -->
-    <div v-if="isLoadingAudio" class="text-center p-4 text-gray-500">
-      Audios werden geladen...
-    </div>
+  <!-- Full-screen Loading Overlay -->
+  <div
+    v-if="isLoadingAudio"
+    class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center"
+  >
+    <h1 class="text-2xl font-bold text-gray-700">Govor</h1>
+    <div
+      class="loader ease-linear rounded-full border-2 border-t-2 border-t-blue-500 border-gray-200 h-8 w-8 mt-4"
+    ></div>
+  </div>
 
+  <div class="pt-5 w-screen p-2 overflow-auto">
     <!-- Fixierte Ja/Nein-Buttons -->
     <div class="flex gap-2 mb-4">
       <button
         @click="playAudio('da', 'Da')"
-        :disabled="isLoadingAudio" // Optional: Deaktivieren während des Ladens
+        :disabled="isLoadingAudio"
         class="flex flex-1 gap-3 items-center justify-center p-4 rounded-lg transition-colors duration-200 h-20 w-full bg-green-100 hover:bg-green-200 text-green-800 relative"
       >
         <component :is="icons.ThumbsUp" class="w-8 h-8" />
@@ -254,7 +268,10 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
             v-for="button in getButtonsByCategory(category)"
             :key="button.text"
             @click="playAudio(button.audio, button.text)"
-            :disabled="isLoadingAudio || !preloadedAudioBuffers[button.audio]" // Optional
+            :disabled="
+              isLoadingAudio ||
+              (!!button.audio && !preloadedAudioBuffers[button.audio])
+            "
             :class="[
               'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
               categoryColors[category as Category], // Kategorie explizit typisieren
@@ -279,7 +296,10 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
           v-for="button in sortedButtons"
           :key="button.text"
           @click="playAudio(button.audio, button.text)"
-          :disabled="isLoadingAudio || !preloadedAudioBuffers[button.audio]" // Optional
+          :disabled="
+            isLoadingAudio ||
+            (!!button.audio && !preloadedAudioBuffers[button.audio])
+          "
           :class="[
             'flex flex-col items-center justify-center px-4 py-4 rounded-lg transition-colors duration-200 relative',
             categoryColors[button.category as Category], // Kategorie explizit typisieren
@@ -295,3 +315,19 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
     </template>
   </div>
 </template>
+
+<style scoped>
+/* CSS für den Ladekreis (Spinner) */
+.loader {
+  animation: spinner 1.2s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
