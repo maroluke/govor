@@ -1,19 +1,19 @@
 <template>
   <div class="p-4 sm:p-8 bg-gray-50">
-    <h1 class="text-2xl font-bold mb-6">Admin-Bereich</h1>
+    <h1 class="text-2xl font-bold mb-6">Admin područje</h1>
 
     <!-- Statistiken -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
       <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="text-lg font-semibold mb-2">Gesamtklicks</h3>
+        <h3 class="text-lg font-semibold mb-2">Ukupno klikova</h3>
         <p class="text-3xl">{{ totalClicks }}</p>
       </div>
       <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="text-lg font-semibold mb-2">Eindeutige IPs</h3>
+        <h3 class="text-lg font-semibold mb-2">Jedinstvene IP adrese</h3>
         <p class="text-3xl">{{ uniqueIPs }}</p>
       </div>
       <div class="bg-white p-4 rounded-lg shadow">
-        <h3 class="text-lg font-semibold mb-2">Beliebtester Button</h3>
+        <h3 class="text-lg font-semibold mb-2">Najpopularniji gumb</h3>
         <p class="text-3xl">{{ mostClickedButton }}</p>
       </div>
     </div>
@@ -23,7 +23,7 @@
       <input
         v-model="searchTerm"
         type="text"
-        placeholder="Suche nach Button oder IP..."
+        placeholder="Pretraži po gumbu ili IP adresi..."
         class="flex-1 p-2 border rounded w-full"
       />
       <div class="flex gap-2 sm:gap-4">
@@ -31,13 +31,13 @@
           @click="exportData"
           class="flex-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 whitespace-nowrap"
         >
-          Exportieren
+          Izvoz
         </button>
         <button
           @click="deleteAllClicks"
           class="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 whitespace-nowrap"
         >
-          Alle löschen
+          Izbriši sve
         </button>
       </div>
     </div>
@@ -52,7 +52,7 @@
                 class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
                 @click="sortBy('buttonText')"
               >
-                Button
+                Gumb
                 {{
                   sortColumn === "buttonText"
                     ? sortDirection === "asc"
@@ -65,7 +65,7 @@
                 class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
                 @click="sortBy('ipAddress')"
               >
-                IP-Adresse
+                IP adresa
                 {{
                   sortColumn === "ipAddress"
                     ? sortDirection === "asc"
@@ -78,7 +78,7 @@
                 class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100 cursor-pointer"
                 @click="sortBy('timestamp')"
               >
-                Zeitstempel
+                Vrijeme
                 {{
                   sortColumn === "timestamp"
                     ? sortDirection === "asc"
@@ -90,7 +90,7 @@
               <th
                 class="px-4 sm:px-6 py-3 border-b border-gray-300 bg-gray-100"
               >
-                Aktionen
+                Akcije
               </th>
             </tr>
           </thead>
@@ -114,7 +114,7 @@
                   @click="deleteClick(click.id)"
                   class="text-red-500 hover:text-red-700"
                 >
-                  Löschen
+                  Izbriši
                 </button>
               </td>
             </tr>
@@ -182,7 +182,7 @@ const mostClickedButton = computed(() => {
 });
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString("de-DE");
+  return new Date(dateString).toLocaleString("hr-HR");
 };
 
 const sortBy = (column: string) => {
@@ -194,15 +194,15 @@ const sortBy = (column: string) => {
   }
 };
 
-let pollInterval: number;
+let pollInterval: NodeJS.Timeout;
 
 const fetchClicks = async () => {
   try {
     // Klicks über API-Endpunkt abrufen
-    const data = await $fetch("/api/clicks");
+    const data = await $fetch<Click[]>("/api/clicks");
     clicks.value = data;
   } catch (error) {
-    console.error("Fehler beim Abrufen der Klicks:", error);
+    console.error("Greška pri dohvaćanju klikova:", error);
   }
 };
 
@@ -222,12 +222,12 @@ const deleteClick = async (id: number) => {
     await $fetch(`/api/clicks/${id}`, { method: "DELETE" });
     await fetchClicks();
   } catch (error) {
-    console.error("Fehler beim Löschen des Klicks:", error);
+    console.error("Greška pri brisanju klika:", error);
   }
 };
 
 const deleteAllClicks = async () => {
-  if (!confirm("Wirklich alle Klicks löschen?")) return;
+  if (!confirm("Stvarno izbrisati sve klikove?")) return;
 
   try {
     // Lösche über den API-Endpunkt
@@ -236,7 +236,7 @@ const deleteAllClicks = async () => {
     // Aktualisiere die Anzeige
     fetchClicks();
   } catch (error) {
-    console.error("Fehler beim Löschen der Klicks:", error);
+    console.error("Greška pri brisanju svih klikova:", error);
   }
 };
 

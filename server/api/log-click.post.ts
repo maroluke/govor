@@ -32,16 +32,38 @@ export default defineEventHandler(async (event) => {
       )
     );
 
-    // Netlify-spezifische Header haben Vorrang
-    const ipAddress =
-      headers["x-nf-client-connection-ip"] || // Netlify-spezifisch
-      headers["client-ip"] || // Netlify-spezifisch
-      headers["x-forwarded-for"]?.split(",")[0]?.trim() || // Standard-Proxy-Header
-      headers["cf-connecting-ip"] || // Cloudflare
-      headers["true-client-ip"] || // Akamai und Cloudflare
-      headers["x-real-ip"] || // Nginx
-      getRequestIP(event) ||
-      "Unbekannt";
+    // Verbesserte IP-Adresserkennung
+    // Priorität: Zuerst IPv4-Adressen versuchen, dann IPv6 akzeptieren
+    let ipAddress = "Unbekannt";
+
+    // Versuche IPv4-Adresse zu bekommen (häufig nützlicher für Geolokalisierung)
+    const ipv4Sources = [
+      headers["x-nf-client-connection-ip"], // Netlify-spezifisch
+      headers["client-ip"], // Netlify-spezifisch
+      headers["x-forwarded-for"]?.split(",")[0]?.trim(), // Standard-Proxy-Header
+      headers["cf-connecting-ip"], // Cloudflare
+      headers["true-client-ip"], // Akamai und Cloudflare
+      headers["x-real-ip"], // Nginx
+      getRequestIP(event),
+    ];
+
+    // Finde erste gültige IPv4-Adresse
+    for (const source of ipv4Sources) {
+      if (source && /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(source)) {
+        ipAddress = source;
+        break;
+      }
+    }
+
+    // Falls keine IPv4 gefunden wurde, akzeptiere auch IPv6
+    if (ipAddress === "Unbekannt") {
+      for (const source of ipv4Sources) {
+        if (source) {
+          ipAddress = source;
+          break;
+        }
+      }
+    }
 
     console.log(
       `[API] POST /api/log-click: Speichere Klick für "${buttonText}" von IP ${ipAddress}`

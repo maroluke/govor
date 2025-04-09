@@ -21,7 +21,7 @@ const handleSortingChange = (value: boolean) => {
 
 <template>
   <nav class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div class="flex justify-between">
         <div class="flex flex-col gap-8 w-full sm:flex-row">
           <p
@@ -33,7 +33,7 @@ const handleSortingChange = (value: boolean) => {
               >Potpomognuta komunikacija</span
             >
             <span class="text-sm flex gap-2 items-center font-normal">
-              Najdražoj ujni, za brz oporavak!
+              Najdražoj ujni!
             </span>
             <span class="text-sm block font-normal">Marko Lukac, 2025.</span>
             <Heart class="fill-red-500 stroke-red-500 mt-3" />
@@ -61,10 +61,11 @@ const handleSortingChange = (value: boolean) => {
                 />
               </button>
             </div>
+            <span class="text-gray-400 w-px h-10 bg-gray-200"></span>
             <template v-if="isAdminPage">
               <NuxtLink
                 to="/"
-                class="shrink text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+                class="border-2 border-gray-200 rounded-full shrink text-gray-300 bg-transparent hover:bg-white p-2 text-sm font-medium flex items-center hover:text-gray-500 hover:border-gray-500"
               >
                 <Home />
               </NuxtLink>
@@ -72,7 +73,7 @@ const handleSortingChange = (value: boolean) => {
             <template v-else>
               <NuxtLink
                 to="/admin"
-                class="shrink text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium bg-gray-100 hover:bg-gray-200"
+                class="border-2 border-gray-200 rounded-full shrink text-gray-300 bg-transparent hover:bg-white p-2 text-sm font-medium flex items-center hover:text-gray-500 hover:border-gray-500"
               >
                 <ChartNoAxesCombined />
               </NuxtLink>
