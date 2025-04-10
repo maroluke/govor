@@ -236,7 +236,7 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
   >
     <h1
       :class="[
-        'text-2xl font-bold text-gray-700 translate-y-0 transition-all duration-300 delay-500 ease-in-out',
+        'text-2xl font-bold text-gray-700 translate-y-0 transition-all duration-300 delay-200 ease-in-out',
         { 'opacity-0 translate-y-4': !isLoadingAudio },
       ]"
     >
