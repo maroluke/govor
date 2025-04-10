@@ -230,13 +230,23 @@ const playAudio = async (audioKey: string, text: string): Promise<void> => {
   <div
     v-show="isLoadingAudio !== null"
     :class="[
-      'fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-500',
+      'fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-1000 delay-300',
       { 'opacity-0 pointer-events-none': !isLoadingAudio },
     ]"
   >
-    <h1 class="text-2xl font-bold text-gray-700">Govor</h1>
+    <h1
+      :class="[
+        'text-2xl font-bold text-gray-700 translate-y-0 transition-all duration-300 delay-500 ease-in-out',
+        { 'opacity-0 translate-y-4': !isLoadingAudio },
+      ]"
+    >
+      Govor
+    </h1>
     <div
-      class="loader ease-linear rounded-full border-2 border-t-2 border-t-black border-gray-200 h-8 w-8 mt-8"
+      :class="[
+        'loader ease-linear rounded-full border-2 border-t-2 border-t-black border-gray-200 h-8 w-8 mt-8 transition-opacity duration-300',
+        { 'opacity-0': !isLoadingAudio },
+      ]"
     ></div>
   </div>
 
